@@ -1,4 +1,4 @@
-package snake.snakeAI.ga.utils;
+package util;
 
 public final class ConsoleUtils {
 

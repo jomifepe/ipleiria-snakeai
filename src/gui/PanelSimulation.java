@@ -1,10 +1,9 @@
 package gui;
 
-import com.sun.webkit.dom.EntityReferenceImpl;
 import snake.Environment;
 import snake.EnvironmentListener;
-import snake.snakeAI.ga.utils.ConsoleColor;
-import snake.snakeAI.ga.utils.ConsoleUtils;
+import util.ConsoleColor;
+import util.ConsoleUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

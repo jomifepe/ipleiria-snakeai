@@ -1,6 +1,5 @@
 package gui;
 
-import snake.Environment;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
 import snake.snakeAI.SnakeExperimentsFactory;
@@ -22,8 +21,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import snake.snakeAI.ga.utils.ConsoleColor;
-import snake.snakeAI.ga.utils.ConsoleUtils;
+import util.ConsoleColor;
+import util.ConsoleUtils;
 
 public class MainFrame extends JFrame implements GAListener {
 

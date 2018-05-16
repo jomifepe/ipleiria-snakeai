@@ -1,4 +1,4 @@
-package snake.snakeAI.ga.utils;
+package util;
 
 public enum ConsoleColor {
     BLACK   ("\u001B[30m"), BRIGHT_BLACK  ("\033[0;90m"),

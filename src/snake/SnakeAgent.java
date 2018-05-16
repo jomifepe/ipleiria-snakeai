@@ -1,7 +1,7 @@
 package snake;
 
-import snake.snakeAI.ga.utils.ConsoleColor;
-import snake.snakeAI.ga.utils.ConsoleUtils;
+import util.ConsoleColor;
+import util.ConsoleUtils;
 
 import java.awt.Color;
 import java.util.LinkedList;
