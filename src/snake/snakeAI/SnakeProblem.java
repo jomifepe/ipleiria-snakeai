@@ -35,7 +35,7 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
     @Override
     public SnakeIndividual getNewIndividual() {
-        int genomeSize = (numInputs + numOutputs) * (numHiddenUnits + 1 /* bias */);
+        int genomeSize = (numInputs + 1) * (numHiddenUnits) + (numHiddenUnits + 1 /* bias */) * numOutputs;
         return new SnakeIndividual(this, genomeSize /*TODO?*/);
     }
 
@@ -46,6 +46,8 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
     public int getNumEvironmentSimulations() {
         return numEnvironmentRuns;
     }
+
+    public int getMaxIterations() { return maxIterations; }
 
     // MODIFY IF YOU DEFINE OTHER PARAMETERS
     public static SnakeProblem buildProblemFromFile(File file) throws IOException {

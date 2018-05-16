@@ -42,6 +42,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     @Override
     public double computeFitness() {
         Environment environment = problem.getEnvironment();
+        int maxIterations = problem.getMaxIterations();
 
         int movements = 0, food = 0;
         for (int i = 0; i < problem.getNumEvironmentSimulations(); i++) {
@@ -68,7 +69,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         bestMoves = (double) movements / problem.getNumEvironmentSimulations();
         bestTail = (double) food / problem.getNumEvironmentSimulations();
 
-        return fitness = (movements >> 4) + (food << 8);
+        return fitness = ((maxIterations * problem.getNumEvironmentSimulations()) / 16) + (food << 8) - (movements >> 4);
     }
 
     public double[] getGenome(){

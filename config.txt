@@ -1,14 +1,14 @@
 Runs: 10
 
-Population size: 1000
+Population size: 20
 
-Max generations: 1500
+Max generations: 50
 
 //--------------------------------
 
 Selection: tournament
 
-Tournament size: 2
+Tournament size: 4
 
 //--------------------------------
 
@@ -20,13 +20,13 @@ Recombination probability: 0.7
 
 Mutation: uniform_distribution
 
-Mutation probability: 0.1
+Mutation probability: 0.015
 
 Delta: 0.02
 
 //--------------------------------
 
-Problem file: ./DataSets/DataSet1.txt
+Problem file: ./DataSets/DataSet1_6HLU.txt
 
 //--------------------------------
 
