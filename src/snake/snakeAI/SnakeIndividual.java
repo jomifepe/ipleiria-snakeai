@@ -61,9 +61,11 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
                 ((SnakeAIAgent) agent).setWeights(genome);
             }
             environment.simulate();
-
             movements += environment.getIterations();
-            food += agents.get(0).getTailSize();
+            for (SnakeAgent agent : agents) {
+                food += agent.getTailSize();
+                System.out.println(agent.getTailSize());
+            }
         }
 
         bestMoves = (double) movements / problem.getNumEvironmentSimulations();

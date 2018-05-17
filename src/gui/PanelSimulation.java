@@ -20,7 +20,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     public static final int PANEL_SIZE = 250;
     public static final int CELL_SIZE = 20;
     public static final int GRID_TO_PANEL_GAP = 20;
-    public static final int UPDATE_INTERVAL = 50;
+    public static final int UPDATE_INTERVAL = 150;
     MainFrame mainFrame;
     private Environment environment;
     private Image image;

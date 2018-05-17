@@ -88,6 +88,18 @@ public class Environment {
                 agents.add(agent);
                 break;
             case CB_2IDENTICALAI:
+                if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
+                    throw new IllegalArgumentException("Invalid Neural Network dimensions");
+
+                SnakeAIAgent agentBase = new SnakeAIAgent(cell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                if (bestInRun != null)
+                    agentBase.setWeights(bestInRun.getGenome());
+                agents.add(agentBase);
+                cell = new Cell(random.nextInt(grid.length-1), random.nextInt(grid.length-1));
+                SnakeAIAgent agentClone = new SnakeAIAgent(cell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
+                if (bestInRun != null)
+                    agentClone.setWeights(bestInRun.getGenome());
+                agents.add(agentClone);
                 break;
             case CB_2DISTINCTAI:
                 break;
@@ -122,6 +134,24 @@ public class Environment {
             numIterations++;
         }
     }
+
+   /* public void simulate() {
+        boolean isAlive = true;
+
+        for (int i = 0; i < maxIterations; i++) {
+            for (SnakeAgent agent : agents) {
+                agent.act(this);
+                fireUpdatedEnvironment();
+                if( !agent.isAlive() )
+                    isAlive = false;
+                break;
+            }
+            if(!isAlive)
+                break;
+
+            numIterations++;
+        }
+    }*/
 
     public int getSize() {
         return grid.length;
