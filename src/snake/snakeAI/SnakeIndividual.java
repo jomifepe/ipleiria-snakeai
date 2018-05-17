@@ -43,9 +43,10 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     public double computeFitness() {
         Environment environment = problem.getEnvironment();
         int maxIterations = problem.getMaxIterations();
+        int numSimulations = problem.getNumEvironmentSimulations();
 
         int movements = 0, food = 0;
-        for (int i = 0; i < problem.getNumEvironmentSimulations(); i++) {
+        for (int i = 0; i < numSimulations; i++) {
             // generating the SnakeAIAgent and the food
             environment.initialize(i);
 
@@ -64,14 +65,15 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
             movements += environment.getIterations();
             for (SnakeAgent agent : agents) {
                 food += agent.getTailSize();
-                System.out.println(agent.getTailSize());
+//                System.out.println(agent.getTailSize());
             }
         }
 
-        bestMoves = (double) movements / problem.getNumEvironmentSimulations();
-        bestTail = (double) food / problem.getNumEvironmentSimulations();
+        bestMoves = (double) movements / numSimulations;
+        bestTail = (double) food / numSimulations;
 
-        return fitness = ((maxIterations * problem.getNumEvironmentSimulations()) / 16) + (food << 8) - (movements >> 4);
+        return fitness = ((maxIterations * numSimulations) / 16) + (food << 8) - (movements >> 4);
+//        return fitness = ((maxIterations * numSimulations) / 16) + (food << 4) - (movements >> 4);
     }
 
     public double[] getGenome(){
@@ -81,11 +83,13 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\nFitness: ");
+        sb.append("Fitness: ");
         sb.append(fitness);
-        sb.append("\nFood pieces eaten: ");
+        sb.append(System.lineSeparator());
+        sb.append("Food pieces eaten: ");
         sb.append(bestTail);
-        sb.append("\nMovements: ");
+        sb.append(System.lineSeparator());
+        sb.append("Movements: ");
         sb.append(bestMoves);
 
         return sb.toString();

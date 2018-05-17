@@ -1,5 +1,6 @@
 package gui;
 
+import snake.Environment;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
 import snake.snakeAI.SnakeExperimentsFactory;
@@ -186,6 +187,8 @@ public class MainFrame extends JFrame implements GAListener {
                 JOptionPane.showMessageDialog(this, "You must first choose a problem", "Error!", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if (panelParameters.getCBSnakeTypeSelectedIndex() < Environment.CB_AI)
+                throw new IllegalArgumentException();
 
             bestIndividualPanel.textArea.setText("");
             seriesBestIndividual.clear();
@@ -232,6 +235,8 @@ public class MainFrame extends JFrame implements GAListener {
 
         } catch (NumberFormatException e1) {
             JOptionPane.showMessageDialog(this, "Wrong parameters!", "Error!", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e2) {
+            JOptionPane.showMessageDialog(this, "Operation not supported for non-AI agents", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -30,4 +30,20 @@ public enum Action {
 
         return null;
     }
+
+    public Action opposite() {
+        return valueOf(this.getX() * - 1, this.getY() * -1);
+    }
+
+    @Override
+    public String toString() {
+        switch (this) {
+            case NORTH: return "NORTH ↑";
+            case SOUTH: return "SOUTH ↓";
+            case EAST:  return "EAST →";
+            case WEST:  return "WEST ←";
+        }
+
+        return super.toString();
+    }
 }

@@ -43,7 +43,7 @@ public abstract class SnakeAgent {
 
     private void printDecision(Action action) {
         ConsoleUtils.println(action != null ? ConsoleColor.BRIGHT_GREEN: ConsoleColor.BRIGHT_RED,
-                "Action decided:", action != null ? action.name() : "null");
+                "Action decided:", action != null ? action.toString() : "null");
     }
 
     protected Perception buildPerception() {

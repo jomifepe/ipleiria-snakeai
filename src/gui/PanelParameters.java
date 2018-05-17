@@ -21,7 +21,7 @@ public class PanelParameters extends PanelAtributesValue {
 
     // TODO MODIFY TO CHANGE THE DEFAULT PARAMETER VALUES
     public static final String SEED = "1";
-    public static final String POPULATION_SIZE = "200";
+    public static final String POPULATION_SIZE = "100";
     public static final String GENERATIONS = "1000";
     public static final String TOURNAMENT_SIZE = "4";
     public static final String PROB_RECOMBINATION = "0.7";
@@ -40,9 +40,9 @@ public class PanelParameters extends PanelAtributesValue {
     static String[] selectionSnakeType = {
             "Randomly controlled snake",
             "Snake with ad-hoc controller",
-            "One intelligent snake",
-            "Two identical intelligent snakes",
-            "Two distinct intelligent snakes"
+            "AI - One snake",
+            "AI - Two identical snakes",
+            "AI - Two distinct snakes"
     };
 
     private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
@@ -55,12 +55,7 @@ public class PanelParameters extends PanelAtributesValue {
 
         labels.add(new JLabel("Snake type: "));
         valueComponents.add(comboBoxSelectionSnakeType);
-        comboBoxSelectionSnakeType.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                warnCBSnakeTypeListeners();
-            }
-        });
+        comboBoxSelectionSnakeType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
 
         labels.add(new JLabel("Seed: "));
         valueComponents.add(textFieldSeed);
@@ -104,8 +99,9 @@ public class PanelParameters extends PanelAtributesValue {
             listener.snakeTypeChanged(comboBoxSelectionSnakeType.getSelectedIndex());
     }
 
-//    public void JComboBoxSelectionSnakeType_actionPerformed(ActionEvent e) {
-//    }
+    public void JComboBoxSelectionSnakeType_actionPerformed(ActionEvent e) {
+        warnCBSnakeTypeListeners();
+    }
 
     public void actionPerformedSelectionMethods(ActionEvent e) {
         textFieldTournamentSize.setEnabled(comboBoxSelectionMethods.getSelectedIndex() == 0);
@@ -154,6 +150,10 @@ public class PanelParameters extends PanelAtributesValue {
         String seed = textFieldSeed.getText().trim();
         return Integer.parseInt(seed);
     }
+
+    public static int getCBSnakeTypeSelectedIndex() {
+        return comboBoxSelectionSnakeType.getSelectedIndex();
+    }
 }
 
 class JComboBoxSelectionMethods_ActionAdapter implements ActionListener {
@@ -170,19 +170,19 @@ class JComboBoxSelectionMethods_ActionAdapter implements ActionListener {
     }
 }
 
-//class JComboBoxSelectionSnakeType_ActionAdapter implements ActionListener {
-//
-//    final private PanelParameters adaptee;
-//
-//    JComboBoxSelectionSnakeType_ActionAdapter(PanelParameters adaptee) {
-//        this.adaptee = adaptee;
-//    }
-//
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        adaptee.JComboBoxSelectionSnakeType_actionPerformed(e);
-//    }
-//}
+class JComboBoxSelectionSnakeType_ActionAdapter implements ActionListener {
+
+    final private PanelParameters adaptee;
+
+    JComboBoxSelectionSnakeType_ActionAdapter(PanelParameters adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        adaptee.JComboBoxSelectionSnakeType_actionPerformed(e);
+    }
+}
 
 class IntegerTextField_KeyAdapter implements KeyListener {
 

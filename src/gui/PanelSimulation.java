@@ -5,11 +5,7 @@ import snake.EnvironmentListener;
 import util.ConsoleColor;
 import util.ConsoleUtils;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -20,7 +16,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     public static final int PANEL_SIZE = 250;
     public static final int CELL_SIZE = 20;
     public static final int GRID_TO_PANEL_GAP = 20;
-    public static final int UPDATE_INTERVAL = 150;
+    public static final int UPDATE_INTERVAL = 50;
     MainFrame mainFrame;
     private Environment environment;
     private Image image;
@@ -28,6 +24,10 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     JLabel simulationInfoLabel = new JLabel("Simulation no.:");
     JLabel simulationInfoNumber = new JLabel("");
     final JButton buttonSimulate = new JButton("Simulate");
+    final JButton buttonStopSimulate = new JButton("Stop");
+
+    final JPanel panelSimulateButtons = new JPanel();
+    GroupLayout panelSimulateButtonsLayout = new GroupLayout(panelSimulateButtons);
 
     private SwingWorker<Void, Void> worker;
 
@@ -39,11 +39,22 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         setLayout(new BorderLayout());
 
         add(environmentPanel, java.awt.BorderLayout.NORTH);
-        add(simulationInfoLabel, BorderLayout.LINE_START);
-        add(simulationInfoNumber, BorderLayout.LINE_END);
-        setSimulationInfoVisible(false);
-        add(buttonSimulate, java.awt.BorderLayout.SOUTH);
+
+//        add(simulationInfoLabel, BorderLayout.CENTER);
+//        add(simulationInfoNumber, BorderLayout.AFTER_LINE_ENDS);
+//        add(buttonSimulate, BorderLayout.CENTER);
+//        add(buttonStopSimulate, BorderLayout.CENTER);
+
         buttonSimulate.addActionListener(new SimulationPanel_jButtonSimulate_actionAdapter(this));
+        buttonStopSimulate.addActionListener(new SimulationPanel_jButtonStopSimulate_actionAdapter(this));
+
+        panelSimulateButtons.setLayout(new BorderLayout());
+        panelSimulateButtons.add(buttonSimulate, BorderLayout.CENTER);
+        panelSimulateButtons.add(buttonStopSimulate, BorderLayout.AFTER_LINE_ENDS);
+
+        setSimulationInfoVisible(false);
+
+        add(panelSimulateButtons, BorderLayout.SOUTH);
 
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(""),
@@ -121,6 +132,10 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
             }
         };
         worker.execute();
+    }
+
+    public void jButtonButtonStopSimulate_actionPerformed(ActionEvent e) {
+        worker.cancel(true);
     }
 
     public void buildImage(Environment environment) {
@@ -201,6 +216,20 @@ class SimulationPanel_jButtonSimulate_actionAdapter implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         adaptee.jButtonSimulate_actionPerformed(e);
+    }
+}
+
+class SimulationPanel_jButtonStopSimulate_actionAdapter implements ActionListener {
+
+    final private PanelSimulation adaptee;
+
+    SimulationPanel_jButtonStopSimulate_actionAdapter(PanelSimulation adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        adaptee.jButtonButtonStopSimulate_actionPerformed(e);
     }
 }
 
