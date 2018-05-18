@@ -1,14 +1,16 @@
 package snake.snakeAI.ga.statistics;
 
+import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
 import snake.snakeAI.ga.GAListener;
 import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.Individual;
 import snake.snakeAI.ga.Problem;
+import snake.snakeAI.ga.experiments.Parameter;
+import snake.snakeAI.ga.utils.FileOperations;
 
 public class StatisticBestInRun<I extends Individual, P extends Problem<I>> implements GAListener {
-
     private I bestInExperiment;
 
     public StatisticBestInRun() {
@@ -28,7 +30,48 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
     @Override
     public void experimentEnded(ExperimentEvent e) {
-        snake.snakeAI.ga.utils.FileOperations.appendToTextFile("statistic_best_per_experiment_fitness.xls", e.getSource() + "\t" + bestInExperiment.getFitness() + "\r\n");
-        snake.snakeAI.ga.utils.FileOperations.appendToTextFile("statistic_best_per_experiment.txt", "\r\n\r\n" + e.getSource() + "\r\n" + bestInExperiment);
+        String filePath = "statistics/";
+        String fileName = "best_per_experiment";
+
+        /* XLS file */
+        String xlsFullPath = filePath + fileName + ".xls";
+
+        StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Population size\t");
+        xlsHeaders.append("Generations\t");
+        xlsHeaders.append("Selection type\t");
+
+        Parameter selectionType = e.getSource().getFactory().getParameters("Selection");
+        if (selectionType.values[selectionType.activeValueIndex].matches("tournament")) {
+            xlsHeaders.append("Tournament size\t");
+        }
+
+        xlsHeaders.append("Recombination type\t");
+        xlsHeaders.append("Recombination prob.\t");
+        xlsHeaders.append("Mutation type\t");
+        xlsHeaders.append("Mutation prob.\t");
+        xlsHeaders.append("Fitness\t");
+        xlsHeaders.append("Food Pieces\t");
+        xlsHeaders.append("Movements\r\n");
+
+        if (!FileOperations.fileExists(xlsFullPath)) {
+            FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
+        }
+
+        FileOperations.appendToTextFile(xlsFullPath,
+                e.getSource() + "\t" + bestInExperiment.toString() + System.lineSeparator()
+        );
+
+        /* TXT file */
+        String txtFullPath = filePath + fileName + ".txt";
+
+        StringBuilder txtIndividual = new StringBuilder();
+        txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + System.lineSeparator());
+        txtIndividual.append("Food Pieces: " + ((SnakeIndividual) bestInExperiment).getBestTail() + System.lineSeparator());
+        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getBestMoves());
+
+        FileOperations.appendToTextFile(txtFullPath,
+                e.getSource().getFactory().prettyPrint() + "\n" + txtIndividual.toString() + System.lineSeparator()
+        );
     }
 }

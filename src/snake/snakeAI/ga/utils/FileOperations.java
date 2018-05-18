@@ -63,4 +63,10 @@ public class FileOperations {
         } catch (IOException ex) {
         }        
     }
+
+    public static boolean fileExists(String fileName) {
+        File f = new File(fileName);
+        return f.exists() && !f.isDirectory();
+
+    }
 }

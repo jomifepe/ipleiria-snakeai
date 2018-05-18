@@ -72,8 +72,8 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         bestMoves = (double) movements / numSimulations;
         bestTail = (double) food / numSimulations;
 
-        return fitness = ((maxIterations * numSimulations) / 16) + (food << 8) - (movements >> 4);
-//        return fitness = ((maxIterations * numSimulations) / 16) + (food << 4) - (movements >> 4);
+//        return fitness = ((maxIterations * numSimulations) / 16) + (food << 8) - (movements >> 4);
+        return fitness = (food << 8) - (movements >> 4);
     }
 
     public double[] getGenome(){
@@ -82,6 +82,15 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(fitness + "\t");
+        sb.append(bestTail + "\t");
+        sb.append(bestMoves);
+
+        return sb.toString();
+    }
+
+    public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         sb.append("Fitness: ");
         sb.append(fitness);
@@ -109,5 +118,13 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     @Override
     public SnakeIndividual clone() {
         return new SnakeIndividual(this);
+    }
+
+    public double getBestMoves() {
+        return bestMoves;
+    }
+
+    public double getBestTail() {
+        return bestTail;
     }
 }

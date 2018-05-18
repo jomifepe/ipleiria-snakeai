@@ -6,6 +6,8 @@ import snake.snakeAI.ga.GAListener;
 import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.Individual;
 import snake.snakeAI.ga.Problem;
+import snake.snakeAI.ga.experiments.Parameter;
+import snake.snakeAI.ga.utils.FileOperations;
 import snake.snakeAI.ga.utils.Maths;
 
 public class StatisticBestAverage<E extends Individual, P extends Problem<E>> implements GAListener  {
@@ -29,10 +31,36 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
 
     @Override
     public void experimentEnded(ExperimentEvent e) {
+        String filePath = "statistics/";
+        String fileName = "average_fitness";
 
-        double average = Maths.average(values);
-        double sd = Maths.standardDeviation(values, average);
+        String xlsFullPath = filePath + fileName + ".xls";
+
+        StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Population size\t");
+        xlsHeaders.append("Generations\t");
+        xlsHeaders.append("Selection type\t");
+
+        Parameter selectionType = e.getSource().getFactory().getParameters("Selection");
+        if (selectionType.values[selectionType.activeValueIndex].matches("tournament")) {
+            xlsHeaders.append("Tournament size\t");
+        }
+
+        xlsHeaders.append("Recombination type\t");
+        xlsHeaders.append("Recombination prob.\t");
+        xlsHeaders.append("Mutation type\t");
+        xlsHeaders.append("Mutation prob.\t");
+        xlsHeaders.append("Average\t");
+        xlsHeaders.append("Standard Deviation\r\n");
+
+        double averageFitness = Maths.average(values);
+        double sd = Maths.standardDeviation(values, averageFitness);
+
+        if (!FileOperations.fileExists(xlsFullPath))
+            FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
         
-        snake.snakeAI.ga.utils.FileOperations.appendToTextFile("statistic_average_fitness.xls", e.getSource() + "\t" + average + "\t" + sd + "\r\n");
+        FileOperations.appendToTextFile(xlsFullPath,
+                e.getSource() + "\t" + averageFitness + "\t" + sd + "\r\n"
+        );
     }    
 }

@@ -30,6 +30,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     GroupLayout panelSimulateButtonsLayout = new GroupLayout(panelSimulateButtons);
 
     private SwingWorker<Void, Void> worker;
+    private PanelSimulation simulationPanel;
 
     public PanelSimulation(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -40,8 +41,8 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
 
         add(environmentPanel, java.awt.BorderLayout.NORTH);
 
-//        add(simulationInfoLabel, BorderLayout.CENTER);
-//        add(simulationInfoNumber, BorderLayout.AFTER_LINE_ENDS);
+        add(simulationInfoLabel, BorderLayout.CENTER);
+        add(simulationInfoNumber, BorderLayout.AFTER_LINE_ENDS);
 //        add(buttonSimulate, BorderLayout.CENTER);
 //        add(buttonStopSimulate, BorderLayout.CENTER);
 
@@ -88,7 +89,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
 
         buildImage(environment);
 
-        final PanelSimulation simulationPanel = this;
+        simulationPanel = this;
 
         if (worker != null && !worker.isDone()) {
             environment.removeEnvironmentListener(simulationPanel);
@@ -135,19 +136,25 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     }
 
     public void jButtonButtonStopSimulate_actionPerformed(ActionEvent e) {
-        worker.cancel(true);
+        //worker.cancel(true);
+        if (worker != null && !worker.isDone()) {
+            environment.removeEnvironmentListener(simulationPanel);
+            worker.cancel(true);
+        }
+
+
     }
 
     public void buildImage(Environment environment) {
         image = new BufferedImage(
-                environment.getSize() * CELL_SIZE + 1,
-                environment.getSize() * CELL_SIZE + 1,
+                environment.getNumLines() * CELL_SIZE + 1,
+                environment.getNumLines() * CELL_SIZE + 1,
                 BufferedImage.TYPE_INT_RGB);
     }
 
     @Override
     public void environmentUpdated() {
-        int n = environment.getSize();
+        int n = environment.getNumLines();
         Graphics g = image.getGraphics();
 
         //Fill the cells color

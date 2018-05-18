@@ -22,6 +22,6 @@ public class RecombinationUniform <I extends Individual> extends Recombination<I
     
     @Override
     public String toString(){
-        return "uniform recombination (" + probability + ")";
+        return "Uniform";
     }
 }

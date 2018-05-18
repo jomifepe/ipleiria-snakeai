@@ -45,6 +45,6 @@ public class Tournament <I extends Individual, P extends Problem<I>> extends Sel
     
     @Override
     public String toString(){
-        return "Tournament(" + size + ")";
+        return "Tournament";
     }    
 }

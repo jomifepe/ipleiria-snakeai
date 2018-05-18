@@ -5,6 +5,8 @@ import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
 import snake.snakeAdhoc.SnakeAdhocAgent;
 import snake.snakeRandom.SnakeRandomAgent;
+import util.ConsoleColor;
+import util.ConsoleUtils;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -119,42 +121,23 @@ public class Environment {
     }
 
     public void simulate() {
-        boolean isAlive = true;
-
+        boolean aliveSnakes = true;
         for (int i = 0; i < maxIterations; i++) {
-            if (!isAlive)
+            if (!aliveSnakes)
                 break;
 
             for (SnakeAgent agent : agents) {
+                if (!agent.isAlive())
+                    continue;
+
                 agent.act(this);
                 fireUpdatedEnvironment();
-                isAlive = agent.isAlive();
             }
 
+            /* verfifies if there's any snake left */
+            aliveSnakes = agents.stream().anyMatch(SnakeAgent::isAlive);
             numIterations++;
         }
-    }
-
-   /* public void simulate() {
-        boolean isAlive = true;
-
-        for (int i = 0; i < maxIterations; i++) {
-            for (SnakeAgent agent : agents) {
-                agent.act(this);
-                fireUpdatedEnvironment();
-                if( !agent.isAlive() )
-                    isAlive = false;
-                break;
-            }
-            if(!isAlive)
-                break;
-
-            numIterations++;
-        }
-    }*/
-
-    public int getSize() {
-        return grid.length;
     }
 
     public boolean hasBestInRun() {
@@ -168,7 +151,8 @@ public class Environment {
 //    public Cell getCellToThe(Action action, Cell relativeTo) {
 //        int line = relativeTo.getLine() + action.getX();
 //        int column = relativeTo.getColumn() + action.getY();
-//        if (line < 0 || line >= grid.length || column < 0 || column >= grid[0].length)
+//
+//        if (line < 0 || line >= getNumLines() || column < 0 || column >= getNumColumns())
 //            return null;
 //
 //        return grid[line][column];

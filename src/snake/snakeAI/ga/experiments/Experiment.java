@@ -11,13 +11,13 @@ public class Experiment <E extends ExperimentsFactory, P extends Problem>{
     private final int numRuns;
     private GeneticAlgorithm ga;
     private final P problem;
-    private final String textualRepresentation;
+    private final String experimentValuesString;
 
-    public Experiment(E factory, int numRuns, P problem, String textualRepresentation) {
+    public Experiment(E factory, int numRuns, P problem, String experimentValuesString) {
         this.factory = factory;
         this.numRuns = numRuns;
         this.problem = problem;
-        this.textualRepresentation = textualRepresentation;
+        this.experimentValuesString = experimentValuesString;
     }
 
     public void run() {
@@ -47,6 +47,10 @@ public class Experiment <E extends ExperimentsFactory, P extends Problem>{
     
     @Override
     public String toString(){
-        return textualRepresentation;
+        return experimentValuesString;
+    }
+
+    public E getFactory() {
+        return factory;
     }
 }

@@ -21,6 +21,10 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
     private Mutation<SnakeIndividual> mutation;
     private SnakeProblem problem;
     private Experiment<SnakeExperimentsFactory, SnakeProblem> experiment;
+    private double recombinationProbability;
+    private double mutationProbability;
+    private int tournamentSize = -1;
+    private double delta;
 
     public SnakeExperimentsFactory(File configFile) throws IOException {
         super(configFile);
@@ -35,7 +39,7 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         //SELECTION
         switch(getParameterValue("Selection")) {
             case "tournament":
-                int tournamentSize = Integer.parseInt(getParameterValue("Tournament size"));
+                tournamentSize = Integer.parseInt(getParameterValue("Tournament size"));
                 selection = new Tournament<>(populationSize, tournamentSize);
                 break;
             case "roullette":
@@ -43,7 +47,7 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         }
 
         //RECOMBINATION
-        double recombinationProbability = Double.parseDouble(getParameterValue("Recombination probability"));
+        recombinationProbability = Double.parseDouble(getParameterValue("Recombination probability"));
         switch(getParameterValue("Recombination")){
             case "one_cut":
                 recombination = new RecombinationOneCut<>(recombinationProbability);
@@ -53,29 +57,34 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
                 break;
             case "uniform":
                 recombination = new RecombinationUniform<>(recombinationProbability);
+                break;
         }
 
         // TODO YOU MAY ADD NEW PARAMETERS (eg., NEW GENETIC OPERATORS, ...).
 
-
-
         //MUTATION
-        double mutationProbability = Double.parseDouble(getParameterValue("Mutation probability"));
-        if (getParameterValue("Mutation").equals("uniform_distribution")) {
-            //TODO OTHER PARAMETERS TO YOUR MUTATION OPERATOR, IF THEY EXIST, ARE FETCHED HERE
-            mutation = new MutationAddSubtract<>(mutationProbability /*TODO COMPLETE?*/);
+        mutationProbability = Double.parseDouble(getParameterValue("Mutation probability"));
+        delta = Double.parseDouble(getParameterValue("Delta"));
+        switch (getParameterValue("Mutation")) {
+            case "gaussian":
+                mutation = new MutationGaussian<>(mutationProbability, delta);
+                break;
+            case "add_or_subtract":
+                mutation = new MutationAddOrSubtract<>(mutationProbability, delta);
+                break;
         }
 
         //PROBLEM 
         problem = SnakeProblem.buildProblemFromFile(new File(getParameterValue("Problem file")));
 
-        String textualRepresentation = buildTextualExperiment();
+        String experimentValuesString = getExperimentValuesString();
 
-        experiment = new Experiment<>(this, numRuns, problem, textualRepresentation);
+        experiment = new Experiment<>(this, numRuns, problem, experimentValuesString);
 
         statistics = new ArrayList<>();
         for (String statisticName : statisticsNames) {
             ExperimentListener statistic = buildStatistic(statisticName);
+
             statistics.add(statistic);
             experiment.addExperimentListener(statistic);
         }
@@ -111,13 +120,38 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         return null;
     }
 
-    private String buildTextualExperiment() {
+    private String getExperimentValuesString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Population size:" + populationSize + "\t");
-        sb.append("Max generations:" + maxGenerations + "\t");
-        sb.append("Selection:" + selection + "\t");
-        sb.append("Recombination:" + recombination + "\t");
-        sb.append("Mutation:" + mutation + "\t");
+        sb.append(populationSize + "\t");
+        sb.append(maxGenerations + "\t");
+        sb.append(selection + "\t");
+
+        if (selection instanceof Tournament)
+            sb.append(tournamentSize + "\t");
+
+        sb.append(recombination + "\t");
+        sb.append(recombinationProbability + "\t");
+        sb.append(mutation + "\t");
+        sb.append(mutationProbability);
+
+        return sb.toString();
+    }
+
+    @Override
+    public String prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Population size: " + populationSize + System.lineSeparator());
+        sb.append("Generations: " + maxGenerations + System.lineSeparator());
+        sb.append("Selection type: " + selection + System.lineSeparator());
+
+        if (selection instanceof Tournament)
+            sb.append("Selection size: " + tournamentSize + System.lineSeparator());
+
+        sb.append("Recombination type: " + recombination + System.lineSeparator());
+        sb.append("Recombination prob.: " + recombinationProbability + System.lineSeparator());
+        sb.append("Mutation type: " + mutation + System.lineSeparator());
+        sb.append("Mutation prob.:" + mutationProbability);
+
         return sb.toString();
     }
 }

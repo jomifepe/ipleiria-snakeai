@@ -25,6 +25,6 @@ public class RecombinationTwoCuts <I extends Individual> extends Recombination<I
     
     @Override
     public String toString(){
-        return "Two cuts recombination (" + probability + ")";
+        return "Two cuts";
     }    
 }

@@ -172,6 +172,7 @@ public class MainFrame extends JFrame implements GAListener {
                 problemPanel.textArea.setText(problem.toString());
                 problemPanel.textArea.setCaretPosition(0);
                 buttonRun.setEnabled(true);
+
                 panelParameters.warnCBSnakeTypeListeners();
             }
         } catch (IOException e1) {
@@ -243,7 +244,9 @@ public class MainFrame extends JFrame implements GAListener {
     @Override
     public void generationEnded(GAEvent e) {
         GeneticAlgorithm<SnakeIndividual, SnakeProblem> source = e.getSource();
-        bestIndividualPanel.textArea.setText(source.getBestInRun().toString());
+
+        bestIndividualPanel.textArea.setText(source.getBestInRun().prettyPrint());
+
         seriesBestIndividual.add(source.getGeneration(), source.getBestInRun().getFitness());
         seriesAverage.add(source.getGeneration(), source.getAverageFitness());
 
@@ -269,6 +272,9 @@ public class MainFrame extends JFrame implements GAListener {
         try {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 experimentsFactory = new SnakeExperimentsFactory(fc.getSelectedFile());
+//                problemPanel.textArea.setText(experiment.prettyPrint());
+//                problemPanel.textArea.setCaretPosition(0);
+
                 manageButtons(true, problem != null, false, true, true, false);
             }
         } catch (IOException e1) {

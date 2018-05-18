@@ -17,6 +17,7 @@ public abstract class SnakeAgent {
     protected boolean alive;
 
     public SnakeAgent(Cell cell, Color headColor, Color tailColor) {
+        this.alive = true;
         this.head = cell;
         if (cell != null) {
             this.head.setAgentHead(this);
@@ -51,34 +52,44 @@ public abstract class SnakeAgent {
                 environment.getEastCell(head), environment.getWestCell(head));
     }
 
-    protected void execute(Action action)
-    {
+    protected void execute(Action action) {
+        if (action == null) {
+            alive = false;
+            return;
+        }
+
+        int maxGridLin = environment.getNumLines() - 1;
+        int maxGridCol = environment.getNumColumns() - 1;
+
         Cell nextCell = null;
         Cell currentCell = new Cell(head.getLine(), head.getColumn());
 
-        if (action == Action.NORTH &&
-                head.getLine() != 0 &&
-                !environment.getNorthCell(head).hasTailCell()) {
-
-            nextCell = environment.getNorthCell(head);
-        } else if (action == Action.SOUTH &&
-                head.getLine() != environment.getNumLines() - 1 &&
-                !environment.getSouthCell(head).hasTailCell()) {
-
-            nextCell = environment.getSouthCell(head);
-        } else if (action == Action.WEST && head.getColumn() != 0  &&
-                !environment.getWestCell(head).hasTailCell()) {
-
-            nextCell = environment.getWestCell(head);
-        } else if (action == Action.EAST &&
-                head.getColumn() != environment.getNumColumns() - 1 &&
-                !environment.getEastCell(head).hasTailCell()) {
-
-            nextCell = environment.getEastCell(head);
+        switch (action) {
+            case NORTH:
+                Cell northCell = environment.getNorthCell(head);
+                if (head.canMoveTo(northCell, maxGridLin, maxGridCol))
+                    nextCell = northCell;
+                break;
+            case SOUTH:
+                Cell southCell = environment.getSouthCell(head);
+                if (head.canMoveTo(southCell, maxGridLin, maxGridCol))
+                    nextCell = southCell;
+                break;
+            case EAST:
+                Cell eastCell = environment.getEastCell(head);
+                if (head.canMoveTo(eastCell, maxGridLin, maxGridCol))
+                    nextCell = eastCell;
+                break;
+            case WEST:
+                Cell westCell = environment.getWestCell(head);
+                if (head.canMoveTo(westCell, maxGridLin, maxGridCol))
+                    nextCell = westCell;
+                break;
         }
 
-        if (nextCell != null && !nextCell.hasAgent()) {
+        if (nextCell != null) {
             boolean currentCellHasFood = nextCell.hasFood();
+
             updateTail(currentCell, currentCellHasFood, environment);
             setCell(nextCell);
         }

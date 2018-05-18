@@ -142,8 +142,7 @@ public class PanelParameters extends PanelAtributesValue {
 
     public Mutation<SnakeIndividual> getMutationMethod() {
         double mutationProbability = Double.parseDouble(textFieldProbMutation.getText());
-        //TODO
-        return new MutationAddSubtract<>(mutationProbability/*TODO?*/);
+        return new MutationGaussian<>(mutationProbability);
     }
 
     public static int getTFSeedValue() {

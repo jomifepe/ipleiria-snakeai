@@ -1,6 +1,0 @@
-Environment size: 10
-Maximum number of iterations: 500
-Number of NN inputs: 8
-Number of NN hidden units: 6
-Number of NN outputs: 4
-Number of environment simulations: 10

@@ -65,15 +65,29 @@ public class Cell {
         return this.tailCell == null && this.agentHead == null;
     }
 
+    public boolean canMoveTo(Cell destination, int maxLin, int maxCol) {
+        if (destination == null || destination.hasAgent() || destination.hasTailCell())
+            return false;
+        if (destination.isToTheNorthOf(this) && this.line == 0)
+            return false;
+        if (destination.isToTheSouthOf(this) && this.line == maxLin)
+            return false;
+        if (destination.isToTheEastOf(this) && this.column == maxCol)
+            return false;
+        if (destination.isToTheWestOf(this) && this.column == 0)
+            return false;
+
+        return true;
+    }
+
     public Color getColor() {
-        if (hasAgent()) {
+        if (hasAgent())
             return agentHead.getHeadColor();
-        } else if (hasFood()) {
+        if (hasFood())
             return food.getColor();
-        } else if (hasTailCell()) {
+        if (hasTailCell())
             return tailCell.getColor();
-        } else {
-            return Cell.COLOR;
-        }
+
+        return Cell.COLOR;
     }
 }

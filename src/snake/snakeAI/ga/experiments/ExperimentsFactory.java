@@ -42,6 +42,10 @@ public abstract class ExperimentsFactory {
         return null;
     }
 
+    public Parameter getParameters(String name) {
+        return parameters.get(name);
+    }
+
     public void indicesManaging(int i) {
         orderedParametersVector[i].activeValueIndex++;
         if (i != 0 && orderedParametersVector[i].activeValueIndex >= orderedParametersVector[i].getNumberOfValues()) {
@@ -107,4 +111,6 @@ public abstract class ExperimentsFactory {
     protected String getParameterValue(String name) {
         return parameters.get(name).getActiveValue();
     }
+
+    public abstract String prettyPrint();
 }

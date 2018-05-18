@@ -115,17 +115,6 @@ public class SnakeAIAgent extends SnakeAgent {
         Cell w = perception.getW();
         Cell food = environment.getFood();
 
-//        setInputs(new int[] {
-//                food.isToTheNorthOf(head) ? 1 : 0,
-//                food.isToTheSouthOf(head) ? 1 : 0,
-//                food.isToTheEastOf(head) ? 1 : 0,
-//                food.isToTheWestOf(head) ? 1 : 0,
-//                n != null && n.isFree() ? (n.hasFood() ? 1 : 0) : -1,
-//                s != null && s.isFree() ? (s.hasFood() ? 1 : 0) : -1,
-//                e != null && e.isFree() ? (e.hasFood() ? 1 : 0) : -1,
-//                w != null && w.isFree() ? (w.hasFood() ? 1 : 0) : -1
-//        });
-
         setInputs(new int[] {
                 food.isToTheNorthOf(head) ? 1 : 0,
                 food.isToTheSouthOf(head) ? 1 : 0,
