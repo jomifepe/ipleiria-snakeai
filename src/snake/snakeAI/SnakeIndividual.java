@@ -5,6 +5,8 @@ import snake.Environment;
 import snake.SnakeAgent;
 import snake.snakeAI.ga.RealVectorIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
+import util.ConsoleColor;
+import util.ConsoleUtils;
 
 import java.util.List;
 
@@ -41,30 +43,33 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
     @Override
     public double computeFitness() {
-        Environment environment = problem.getEnvironment();
+        Environment environment = this.problem.getEnvironment();
         int maxIterations = problem.getMaxIterations();
         int numSimulations = problem.getNumEvironmentSimulations();
+        List<SnakeAgent> agents = environment.getAgents();
+        int stepsTakenSinceLastFood = 0;
 
         int movements = 0, food = 0;
         for (int i = 0; i < numSimulations; i++) {
-            // generating the SnakeAIAgent and the food
+            /* generating the SnakeAIAgent and the food */
             environment.initialize(i);
 
-            // getting the agents currently on the environment
-            List<SnakeAgent> agents = environment.getAgents();
+            /* getting the agents currently on the environment */
+            agents = environment.getAgents();
 
             for (SnakeAgent agent : agents) {
                 if (!(agent instanceof SnakeAIAgent))
                     throw new IllegalArgumentException("Operation not supported for " +
                             agent.getClass().getSimpleName());
 
-                // setting the agent's neural network weights
+                /* setting the agent's neural network weights */
                 ((SnakeAIAgent) agent).setWeights(genome);
             }
             environment.simulate();
             movements += environment.getIterations();
             for (SnakeAgent agent : agents) {
                 food += agent.getTailSize();
+                stepsTakenSinceLastFood += agent.getStepsTakenSinceLastFood();
 //                System.out.println(agent.getTailSize());
             }
         }
@@ -72,8 +77,12 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         bestMoves = (double) movements / numSimulations;
         bestTail = (double) food / numSimulations;
 
+        boolean stalling = stepsTakenSinceLastFood > (100 * agents.size());
+
+//        return fitness = (food * 10000.0) + (movements / (stalling ? 4 : 2));
+        return fitness = (food << 9) - (movements >> (stalling ? 3 : 5));
+//        return fitness = (food << 9) - (movements >> 3);
 //        return fitness = ((maxIterations * numSimulations) / 16) + (food << 8) - (movements >> 4);
-        return fitness = (food << 8) - (movements >> 4);
     }
 
     public double[] getGenome(){

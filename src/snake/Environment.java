@@ -71,20 +71,21 @@ public class Environment {
     }
 
     // TODO MODIFY TO PLACE ADHOC OR AI SNAKE AGENTS
-    private void placeAgents() {
-        Cell cell = new Cell(random.nextInt(grid.length), random.nextInt(grid.length));
+    void placeAgents() {
+        Cell agentCell = getFreeCell();
+
         switch (PanelParameters.getCBSnakeType()) {
             case CB_RANDOM:
-                agents.add(new SnakeRandomAgent(cell, Color.GREEN));
+                agents.add(new SnakeRandomAgent(agentCell, Color.GREEN));
                 break;
             case CB_ADHOC:
-                agents.add(new SnakeAdhocAgent(cell, Color.GREEN));
+                agents.add(new SnakeAdhocAgent(agentCell, Color.GREEN));
                 break;
             case CB_AI:
                 if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                SnakeAIAgent agent = new SnakeAIAgent(cell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                SnakeAIAgent agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
@@ -93,31 +94,49 @@ public class Environment {
                 if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                SnakeAIAgent agentBase = new SnakeAIAgent(cell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
                 if (bestInRun != null)
-                    agentBase.setWeights(bestInRun.getGenome());
-                agents.add(agentBase);
-                cell = new Cell(random.nextInt(grid.length-1), random.nextInt(grid.length-1));
-                SnakeAIAgent agentClone = new SnakeAIAgent(cell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
+                    agent.setWeights(bestInRun.getGenome());
+                agents.add(agent);
+
+                agentCell = getFreeCell();
+                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
                 if (bestInRun != null)
-                    agentClone.setWeights(bestInRun.getGenome());
-                agents.add(agentClone);
+                    agent.setWeights(bestInRun.getGenome());
+                agents.add(agent);
                 break;
             case CB_2DISTINCTAI:
+                if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
+                    throw new IllegalArgumentException("Invalid Neural Network dimensions");
+
+                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                if (bestInRun != null)
+                    agent.setWeights(bestInRun.getGenome());
+                agents.add(agent);
+
+                agentCell = getFreeCell();
+                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
+                if (bestInRun != null)
+                    agent.setWeights(bestInRun.getGenome());
+                agents.add(agent);
                 break;
         }
     }
 
     void placeFood() {
-        int foodLine;
-        int foodColumn;
+        Cell newFoodCell = getFreeCell();
+        grid[newFoodCell.getLine()][newFoodCell.getColumn()].setFood(food = new Food(newFoodCell));
+    }
+
+    private Cell getFreeCell() {
+        int line, column;
 
         do {
-            foodLine = random.nextInt(grid.length);
-            foodColumn = random.nextInt(grid.length);
-        } while (grid[foodLine][foodColumn].hasAgent() || grid[foodLine][foodColumn].hasTailCell());
+            line = random.nextInt(grid.length);
+            column = random.nextInt(grid.length);
+        } while (grid[line][column].hasAgent() || grid[line][column].hasTailCell());
 
-        grid[foodLine][foodColumn].setFood(food = new Food(new Cell(foodLine, foodColumn)));
+        return new Cell(line, column);
     }
 
     public void simulate() {

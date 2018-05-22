@@ -3,7 +3,8 @@ package snake.snakeAI.nn;
 import snake.*;
 
 import java.awt.Color;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SnakeAIAgent extends SnakeAgent {
     final private int inputLayerSize;
@@ -105,7 +106,7 @@ public class SnakeAIAgent extends SnakeAgent {
     private final int NEURON_SOUTH = 1;
     private final int NEURON_EAST = 2;
     private final int NEURON_WEST = 3;
-    private Action prevDecision = null;
+    private Action previous = null;
 
     @Override
     protected Action decide(Perception perception) {
@@ -120,11 +121,29 @@ public class SnakeAIAgent extends SnakeAgent {
                 food.isToTheSouthOf(head) ? 1 : 0,
                 food.isToTheEastOf(head) ? 1 : 0,
                 food.isToTheWestOf(head) ? 1 : 0,
-                n != null && n.isFree() && (prevDecision != null && prevDecision.opposite() != Action.NORTH) ? (n.hasFood() ? 1 : 0) : -1,
-                s != null && s.isFree() && (prevDecision != null && prevDecision.opposite() != Action.SOUTH) ? (s.hasFood() ? 1 : 0) : -1,
-                e != null && e.isFree() && (prevDecision != null && prevDecision.opposite() != Action.EAST) ? (e.hasFood() ? 1 : 0) : -1,
-                w != null && w.isFree() && (prevDecision != null && prevDecision.opposite() != Action.WEST) ? (w.hasFood() ? 1 : 0) : -1
+                n != null && n.isFree() && (previous != null && previous.opposite() != Action.NORTH) ? (n.hasFood() ? 1 : 0) : -1,
+                s != null && s.isFree() && (previous != null && previous.opposite() != Action.SOUTH) ? (s.hasFood() ? 1 : 0) : -1,
+                e != null && e.isFree() && (previous != null && previous.opposite() != Action.EAST) ? (e.hasFood() ? 1 : 0) : -1,
+                w != null && w.isFree() && (previous != null && previous.opposite() != Action.WEST) ? (w.hasFood() ? 1 : 0) : -1
         });
+
+//       setInputs(new int[] {
+//                food.isToTheNorthOf(head) ? Action.NORTH.getY() : Action.SOUTH.getY(),
+//                food.isToTheEastOf(head) ? Action.EAST.getX() : Action.WEST.getX(),
+//                n != null && n.isFree() ? (previous != null ? (previous.opposite() != Action.NORTH ? 1 : 0) : 1) : 0,
+//                s != null && s.isFree() ? (previous != null ? (previous.opposite() != Action.SOUTH ? 1 : 0) : 1) : 0,
+//                e != null && e.isFree() ? (previous != null ? (previous.opposite() != Action.EAST ? 1 : 0) : 1) : 0,
+//                w != null && w.isFree() ? (previous != null ? (previous.opposite() != Action.WEST ? 1 : 0) : 1) : 0,
+//        });
+
+//        setInputs(new int[] {
+//                food.isToTheNorthOf(head) ? Action.NORTH.getY() : Action.SOUTH.getY(),
+//                food.isToTheEastOf(head) ? Action.EAST.getX() : Action.WEST.getX(),
+//                n != null && n.isFree() && (previous != null && previous.opposite() != Action.NORTH) ? (n.hasFood() ? 1 : 0) : -1,
+//                s != null && s.isFree() && (previous != null && previous.opposite() != Action.SOUTH) ? (s.hasFood() ? 1 : 0) : -1,
+//                e != null && e.isFree() && (previous != null && previous.opposite() != Action.EAST) ? (e.hasFood() ? 1 : 0) : -1,
+//                w != null && w.isFree() && (previous != null && previous.opposite() != Action.WEST) ? (w.hasFood() ? 1 : 0) : -1
+//        });
 
         forwardPropagation();
 //        printOutputs();
@@ -137,10 +156,10 @@ public class SnakeAIAgent extends SnakeAgent {
         }
 
         switch (decision) {
-            case NEURON_NORTH: return (prevDecision = Action.NORTH);
-            case NEURON_SOUTH: return (prevDecision = Action.SOUTH);
-            case NEURON_EAST: return (prevDecision = Action.EAST);
-            case NEURON_WEST: return (prevDecision = Action.WEST);
+            case NEURON_NORTH: return (previous = Action.NORTH);
+            case NEURON_SOUTH: return (previous = Action.SOUTH);
+            case NEURON_EAST: return (previous = Action.EAST);
+            case NEURON_WEST: return (previous = Action.WEST);
         }
 
         return null;

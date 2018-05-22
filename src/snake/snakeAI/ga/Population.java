@@ -26,9 +26,6 @@ public class Population<I extends Individual, P extends Problem<I>> {
             individual.computeFitness();
             if (individual.getFitness() > best.getFitness())
                 best = individual;
-//            if (individual.compareTo(best) < 0) {
-//                best = individual;
-//            }
         }
         return best;
     }

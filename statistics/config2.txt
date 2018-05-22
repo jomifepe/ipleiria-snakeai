@@ -1,0 +1,61 @@
+Runs: 10
+
+
+Population size: 50, 100, 200
+
+
+Max generations: 100
+
+
+
+//--------------------------------
+
+
+
+Selection: tournament
+
+
+Tournament size: 4
+
+
+
+//--------------------------------
+
+
+
+Recombination: one_cut
+
+
+Recombination probability: 0.7
+
+
+
+//--------------------------------
+
+
+
+Mutation: gaussian
+
+
+Mutation probability: 0.015
+
+
+Delta: 0.3
+
+
+
+//--------------------------------
+
+
+
+Problem file: datasets/dataset1_8HiddenLayers.txt
+
+
+
+//--------------------------------
+
+
+
+Statistic: BestIndividual
+
+Statistic: BestAverage

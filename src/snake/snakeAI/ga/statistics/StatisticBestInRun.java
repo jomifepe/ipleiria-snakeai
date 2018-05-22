@@ -59,19 +59,19 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         }
 
         FileOperations.appendToTextFile(xlsFullPath,
-                e.getSource() + "\t" + bestInExperiment.toString() + System.lineSeparator()
+                e.getSource() + "\t" + bestInExperiment.toString() + "\r\n"
         );
 
         /* TXT file */
         String txtFullPath = filePath + fileName + ".txt";
 
         StringBuilder txtIndividual = new StringBuilder();
-        txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + System.lineSeparator());
-        txtIndividual.append("Food Pieces: " + ((SnakeIndividual) bestInExperiment).getBestTail() + System.lineSeparator());
+        txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
+        txtIndividual.append("Food Pieces: " + ((SnakeIndividual) bestInExperiment).getBestTail() + "\r\n");
         txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getBestMoves());
 
         FileOperations.appendToTextFile(txtFullPath,
-                e.getSource().getFactory().prettyPrint() + "\n" + txtIndividual.toString() + System.lineSeparator()
+                e.getSource().getFactory().prettyPrint() + "\n" + txtIndividual.toString() + "\r\n"
         );
     }
 }
