@@ -2,6 +2,7 @@ package gui;
 
 import snake.Environment;
 import snake.EnvironmentListener;
+import snake.ProblemType;
 import util.ConsoleColor;
 import util.ConsoleUtils;
 
@@ -109,7 +110,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
                     for (int i = 0; i < environmentSimulations; i++) {
                         setSimulationInfoNumberText(String.valueOf(i + 1));
                         environment.initialize (
-                            PanelParameters.getCBSnakeType() < Environment.CB_AI ?
+                            PanelParameters.getCBProblemTypeSelectedIndex() < ProblemType.ONE_AI.ordinal() ?
                                     Environment.random.nextInt() : i
                         );
                         environmentUpdated();
@@ -191,7 +192,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
      */
     @Override
     public void snakeTypeChanged(int index) {
-        if (!mainFrame.isDatasetLoaded() || (index >= Environment.CB_AI && !hasBestIndividualToSimulate())) {
+        if (!mainFrame.isDatasetLoaded() || (index >= ProblemType.ONE_AI.ordinal() && !hasBestIndividualToSimulate())) {
             buttonSimulate.setEnabled(false);
             return;
         }

@@ -2,12 +2,15 @@ package snake.snakeAI;
 
 import gui.PanelParameters;
 import snake.Environment;
+import snake.ProblemType;
 import snake.SnakeAgent;
 import snake.snakeAI.ga.RealVectorIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
 import util.ConsoleColor;
 import util.ConsoleUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeIndividual> {
@@ -46,7 +49,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         Environment environment = this.problem.getEnvironment();
         int maxIterations = problem.getMaxIterations();
         int numSimulations = problem.getNumEvironmentSimulations();
-        List<SnakeAgent> agents = environment.getAgents();
+        List<SnakeAgent> agents = new ArrayList<>();
         int stepsTakenSinceLastFood = 0;
 
         int movements = 0, food = 0;
@@ -65,6 +68,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
                 /* setting the agent's neural network weights */
                 ((SnakeAIAgent) agent).setWeights(genome);
             }
+
             environment.simulate();
             movements += environment.getIterations();
             for (SnakeAgent agent : agents) {

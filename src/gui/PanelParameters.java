@@ -1,5 +1,6 @@
 package gui;
 
+import snake.ProblemType;
 import snake.snakeAI.ga.geneticOperators.*;
 import snake.snakeAI.ga.selectionMethods.RouletteWheel;
 import snake.snakeAI.ga.selectionMethods.SelectionMethod;
@@ -37,25 +38,18 @@ public class PanelParameters extends PanelAtributesValue {
     JComboBox comboBoxRecombinationMethods = new JComboBox(recombinationMethods);
     JTextField textFieldProbRecombination = new JTextField(PROB_RECOMBINATION, TEXT_FIELD_LENGHT);
     JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
-    static String[] selectionSnakeType = {
-            "Randomly controlled snake",
-            "Snake with ad-hoc controller",
-            "AI - One snake",
-            "AI - Two identical snakes",
-            "AI - Two distinct snakes"
-    };
 
     private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
-    static JComboBox comboBoxSelectionSnakeType = new JComboBox(selectionSnakeType);
+    static JComboBox comboBoxSelectionProblemType = new JComboBox(ProblemType.values());
 
     //TODO - MORE PARAMETERS?
 
     public PanelParameters() {
         title = "Genetic algorithm parameters";
 
-        labels.add(new JLabel("Snake type: "));
-        valueComponents.add(comboBoxSelectionSnakeType);
-        comboBoxSelectionSnakeType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
+        labels.add(new JLabel("Problem type: "));
+        valueComponents.add(comboBoxSelectionProblemType);
+        comboBoxSelectionProblemType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
 
         labels.add(new JLabel("Seed: "));
         valueComponents.add(textFieldSeed);
@@ -96,7 +90,7 @@ public class PanelParameters extends PanelAtributesValue {
 
     public void warnCBSnakeTypeListeners() {
         for (CBSnakeTypeListener listener : cbSnakeTypeListeners)
-            listener.snakeTypeChanged(comboBoxSelectionSnakeType.getSelectedIndex());
+            listener.snakeTypeChanged(comboBoxSelectionProblemType.getSelectedIndex());
     }
 
     public void JComboBoxSelectionSnakeType_actionPerformed(ActionEvent e) {
@@ -107,8 +101,12 @@ public class PanelParameters extends PanelAtributesValue {
         textFieldTournamentSize.setEnabled(comboBoxSelectionMethods.getSelectedIndex() == 0);
     }
 
-    public static int getCBSnakeType() {
-        return comboBoxSelectionSnakeType.getSelectedIndex();
+    public static int getCBProblemTypeSelectedIndex() {
+        return comboBoxSelectionProblemType.getSelectedIndex();
+    }
+
+    public static ProblemType getProblemType() {
+        return (ProblemType) comboBoxSelectionProblemType.getSelectedItem();
     }
 
     public SelectionMethod<SnakeIndividual, SnakeProblem> getSelectionMethod() {
@@ -148,10 +146,6 @@ public class PanelParameters extends PanelAtributesValue {
     public static int getTFSeedValue() {
         String seed = textFieldSeed.getText().trim();
         return Integer.parseInt(seed);
-    }
-
-    public static int getCBSnakeTypeSelectedIndex() {
-        return comboBoxSelectionSnakeType.getSelectedIndex();
     }
 }
 

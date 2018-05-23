@@ -1,6 +1,6 @@
 package gui;
 
-import snake.Environment;
+import snake.ProblemType;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
 import snake.snakeAI.SnakeExperimentsFactory;
@@ -188,7 +188,7 @@ public class MainFrame extends JFrame implements GAListener {
                 JOptionPane.showMessageDialog(this, "You must first choose a problem", "Error!", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (panelParameters.getCBSnakeTypeSelectedIndex() < Environment.CB_AI)
+            if (PanelParameters.getCBProblemTypeSelectedIndex() < ProblemType.ONE_AI.ordinal())
                 throw new IllegalArgumentException();
 
             bestIndividualPanel.textArea.setText("");

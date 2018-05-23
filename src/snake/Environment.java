@@ -5,8 +5,6 @@ import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
 import snake.snakeAdhoc.SnakeAdhocAgent;
 import snake.snakeRandom.SnakeRandomAgent;
-import util.ConsoleColor;
-import util.ConsoleUtils;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -14,12 +12,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Environment {
-    public static final int CB_RANDOM = 0;
-    public static final int CB_ADHOC = 1;
-    public static final int CB_AI = 2;
-    public static final int CB_2IDENTICALAI = 3;
-    public static final int CB_2DISTINCTAI = 4;
-
     public static Random random;
     private final Cell[][] grid;
     private final List<SnakeAgent> agents;
@@ -27,15 +19,18 @@ public class Environment {
     private final int maxIterations;
     private int numIterations;
 
+    private ProblemType modeOfOperation;
+
     private SnakeIndividual bestInRun = null;
 
-    private int numNNInputs;
-    private int numNNHiddenUnits;
-    private int numNNOutputs;
+    private List<Integer> numNNInputs;
+    private List<Integer> numNNHiddenUnits;
+    private List<Integer> numNNOutputs;
 
     public Environment(int size, int maxIterations) {
         random = new Random();
         this.maxIterations = maxIterations;
+        this.numIterations = 0;
 
         this.grid = new Cell[size][size];
         for (int i = 0; i < grid.length; i++) {
@@ -45,8 +40,9 @@ public class Environment {
         }
 
         this.agents = new ArrayList<>();
-        this.numIterations = 0;
-        this.numNNOutputs = this.numNNHiddenUnits = this.numNNOutputs = 0;
+        this.numNNInputs = new ArrayList<>();
+        this.numNNHiddenUnits = new ArrayList<>();
+        this.numNNOutputs = new ArrayList<>();
     }
 
     public void initialize(int seed) {
@@ -70,52 +66,54 @@ public class Environment {
         agents.clear();
     }
 
-    // TODO MODIFY TO PLACE ADHOC OR AI SNAKE AGENTS
     void placeAgents() {
-        Cell agentCell = getFreeCell();
+        Cell agentCell = getAgentFreeCell();
 
-        switch (PanelParameters.getCBSnakeType()) {
-            case CB_RANDOM:
+        switch (PanelParameters.getProblemType()) {
+            case RANDOM:
                 agents.add(new SnakeRandomAgent(agentCell, Color.GREEN));
                 break;
-            case CB_ADHOC:
+            case ADHOC:
                 agents.add(new SnakeAdhocAgent(agentCell, Color.GREEN));
                 break;
-            case CB_AI:
-                if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
+            case ONE_AI:
+                if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                SnakeAIAgent agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                SnakeAIAgent agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
                 break;
-            case CB_2IDENTICALAI:
-                if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
+            case TWO_IDENTICAL_AI:
+                if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
 
-                agentCell = getFreeCell();
-                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
+                agentCell = getAgentFreeCell();
+                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
                 break;
-            case CB_2DISTINCTAI:
-                if (numNNInputs == 0 || numNNHiddenUnits == 0 || numNNOutputs == 0)
+            case TWO_DIFFERENT_AI:
+                if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.GREEN);
+                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
 
-                agentCell = getFreeCell();
-                agent = new SnakeAIAgent(agentCell, numNNInputs, numNNHiddenUnits, numNNOutputs, Color.BLUE);
+                agentCell = getAgentFreeCell();
+                agent = new SnakeAIAgent(agentCell,
+                        numNNInputs.get(numNNInputs.size() > 1 ? 1 : 0),
+                        numNNHiddenUnits.get(numNNHiddenUnits.size() > 1 ? 1 : 0),
+                        numNNOutputs.get(numNNOutputs.size() > 1 ? 1 : 0), Color.ORANGE);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
@@ -124,19 +122,30 @@ public class Environment {
     }
 
     void placeFood() {
-        Cell newFoodCell = getFreeCell();
-        grid[newFoodCell.getLine()][newFoodCell.getColumn()].setFood(food = new Food(newFoodCell));
+        int foodLine, foodColumn;
+
+        do {
+            foodLine = random.nextInt(grid.length);
+            foodColumn = random.nextInt(grid.length);
+        } while (grid[foodLine][foodColumn].hasAgent() || grid[foodLine][foodColumn].hasTailCell());
+
+        grid[foodLine][foodColumn].setFood(food = new Food(new Cell(foodLine, foodColumn)));
     }
 
-    private Cell getFreeCell() {
+    private Cell getAgentFreeCell() {
         int line, column;
 
         do {
             line = random.nextInt(grid.length);
             column = random.nextInt(grid.length);
-        } while (grid[line][column].hasAgent() || grid[line][column].hasTailCell());
+        } while (!isCellAgentFree(line, column));
 
         return new Cell(line, column);
+    }
+
+    private boolean isCellAgentFree(int line, int column) {
+        return agents.stream().noneMatch(snakeAgent -> snakeAgent.getHead().getLine() == line &&
+                snakeAgent.getHead().getLine() == column);
     }
 
     public void simulate() {
@@ -167,7 +176,21 @@ public class Environment {
         this.bestInRun = bestInRun;
     }
 
-//    public Cell getCellToThe(Action action, Cell relativeTo) {
+    public void setModeOfOperation(ProblemType modeOfOperation) {
+        this.modeOfOperation = modeOfOperation;
+    }
+
+    private boolean nnDimensionsSet() {
+        return numNNInputs.size() > 0 && numNNHiddenUnits.size() > 0 && numNNOutputs.size() > 0;
+    }
+
+    public void setNNDimensions(List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs) {
+        this.numNNInputs = numInputs;
+        this.numNNHiddenUnits = numHiddenUnits;
+        this.numNNOutputs = numOutputs;
+    }
+
+    //    public Cell getCellToThe(Action action, Cell relativeTo) {
 //        int line = relativeTo.getLine() + action.getX();
 //        int column = relativeTo.getColumn() + action.getY();
 //
@@ -225,6 +248,18 @@ public class Environment {
         return food.getCell();
     }
 
+    public List<Integer> getNumNNInputs() {
+        return numNNInputs;
+    }
+
+    public List<Integer> getNumNNHiddenUnits() {
+        return numNNHiddenUnits;
+    }
+
+    public List<Integer> getNumNNOutputs() {
+        return numNNOutputs;
+    }
+
     //listeners
     private final ArrayList<EnvironmentListener> listeners = new ArrayList<>();
 
@@ -250,11 +285,5 @@ public class Environment {
 
     public List<SnakeAgent> getAgents() {
         return agents;
-    }
-
-    public void setNNDimensions(int numInputs, int numHiddenUnits, int numOutputs) {
-        this.numNNInputs = numInputs;
-        this.numNNHiddenUnits = numHiddenUnits;
-        this.numNNOutputs = numOutputs;
     }
 }
