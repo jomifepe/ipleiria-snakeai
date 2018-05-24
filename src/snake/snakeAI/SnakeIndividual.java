@@ -12,6 +12,7 @@ import util.ConsoleUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeIndividual> {
 
@@ -47,7 +48,6 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     @Override
     public double computeFitness() {
         Environment environment = this.problem.getEnvironment();
-        int maxIterations = problem.getMaxIterations();
         int numSimulations = problem.getNumEvironmentSimulations();
         List<SnakeAgent> agents = new ArrayList<>();
         int stepsTakenSinceLastFood = 0;
@@ -74,7 +74,6 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
             for (SnakeAgent agent : agents) {
                 food += agent.getTailSize();
                 stepsTakenSinceLastFood += agent.getStepsTakenSinceLastFood();
-//                System.out.println(agent.getTailSize());
             }
         }
 
@@ -82,11 +81,9 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         bestTail = (double) food / numSimulations;
 
         boolean stalling = stepsTakenSinceLastFood > (100 * agents.size());
+        ConsoleUtils.println(stalling ? ConsoleColor.BRIGHT_RED : ConsoleColor.BRIGHT_GREEN, String.valueOf(stepsTakenSinceLastFood));
 
-//        return fitness = (food * 10000.0) + (movements / (stalling ? 4 : 2));
-        return fitness = (food << 9) - (movements >> (stalling ? 3 : 5));
-//        return fitness = (food << 9) - (movements >> 3);
-//        return fitness = ((maxIterations * numSimulations) / 16) + (food << 8) - (movements >> 4);
+        return fitness = (food << 10) - (movements >> (stalling ? 3 : 5));
     }
 
     public double[] getGenome(){
@@ -109,10 +106,10 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         sb.append(fitness);
         sb.append(System.lineSeparator());
         sb.append("Food pieces eaten: ");
-        sb.append(bestTail);
+        sb.append(String.format(Locale.US, "%.1f", bestTail));
         sb.append(System.lineSeparator());
         sb.append("Movements: ");
-        sb.append(bestMoves);
+        sb.append(String.format(Locale.US, "%.1f", bestMoves));
 
         return sb.toString();
     }

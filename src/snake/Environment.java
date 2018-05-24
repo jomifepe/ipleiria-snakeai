@@ -3,6 +3,8 @@ package snake;
 import gui.PanelParameters;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
+import snake.snakeAI.nn.SnakeAIAgentV1;
+import snake.snakeAI.nn.SnakeAIAgentV2;
 import snake.snakeAdhoc.SnakeAdhocAgent;
 import snake.snakeRandom.SnakeRandomAgent;
 
@@ -18,8 +20,6 @@ public class Environment {
     private Food food;
     private final int maxIterations;
     private int numIterations;
-
-    private ProblemType modeOfOperation;
 
     private SnakeIndividual bestInRun = null;
 
@@ -80,7 +80,7 @@ public class Environment {
                 if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                SnakeAIAgent agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                SnakeAIAgent agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
@@ -89,13 +89,13 @@ public class Environment {
                 if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
-                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
@@ -104,19 +104,19 @@ public class Environment {
                 if (!nnDimensionsSet())
                     throw new IllegalArgumentException("Invalid Neural Network dimensions");
 
-                agent = new SnakeAIAgent(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
                 if (bestInRun != null)
                     agent.setWeights(bestInRun.getGenome());
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
-                agent = new SnakeAIAgent(agentCell,
+                SnakeAIAgentV2 agentV2 = new SnakeAIAgentV2(agentCell,
                         numNNInputs.get(numNNInputs.size() > 1 ? 1 : 0),
                         numNNHiddenUnits.get(numNNHiddenUnits.size() > 1 ? 1 : 0),
                         numNNOutputs.get(numNNOutputs.size() > 1 ? 1 : 0), Color.ORANGE);
                 if (bestInRun != null)
-                    agent.setWeights(bestInRun.getGenome());
-                agents.add(agent);
+                    agentV2.setWeights(bestInRun.getGenome());
+                agents.add(agentV2);
                 break;
         }
     }
@@ -176,10 +176,6 @@ public class Environment {
         this.bestInRun = bestInRun;
     }
 
-    public void setModeOfOperation(ProblemType modeOfOperation) {
-        this.modeOfOperation = modeOfOperation;
-    }
-
     private boolean nnDimensionsSet() {
         return numNNInputs.size() > 0 && numNNHiddenUnits.size() > 0 && numNNOutputs.size() > 0;
     }
@@ -189,16 +185,6 @@ public class Environment {
         this.numNNHiddenUnits = numHiddenUnits;
         this.numNNOutputs = numOutputs;
     }
-
-    //    public Cell getCellToThe(Action action, Cell relativeTo) {
-//        int line = relativeTo.getLine() + action.getX();
-//        int column = relativeTo.getColumn() + action.getY();
-//
-//        if (line < 0 || line >= getNumLines() || column < 0 || column >= getNumColumns())
-//            return null;
-//
-//        return grid[line][column];
-//    }
 
     public Cell getNorthCell(Cell cell) {
         if (cell.getLine() > 0) {

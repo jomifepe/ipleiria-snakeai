@@ -1,36 +1,38 @@
 package snake.snakeAI.nn;
 
 import snake.*;
+import snake.snakeAI.nn.utils.ActivationFunction;
+import sun.rmi.server.Activation;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SnakeAIAgent extends SnakeAgent {
-    final private int inputLayerSize;
-    final private int hiddenLayerSize;
-    final private int outputLayerSize;
+public abstract class SnakeAIAgent extends SnakeAgent {
+    final protected int inputLayerSize;
+    final protected int hiddenLayerSize;
+    final protected int outputLayerSize;
 
     /**
      * Network inputs array.
      */
-    final private int[] inputs;
+    final protected int[] inputs;
     /**
      * Hiddden layer weights.
      */
-    final private double[][] w1;
+    final protected double[][] w1;
     /**
      * Output layer weights.
      */
-    final private double[][] w2;
+    final protected double[][] w2;
     /**
      * Hidden layer activation values.
      */
-    final private double[] hiddenLayerOutput;
+    final protected double[] hiddenLayerOutput;
     /**
      * Output layer activation values.
      */
-    final private double[] output;
+    final protected double[] output;
 
     public SnakeAIAgent(Cell cell, int inputLayerSize, int hiddenLayerSize, int outputLayerSize, Color color) {
         super(cell, color.darker(), color);
@@ -47,7 +49,7 @@ public class SnakeAIAgent extends SnakeAgent {
     }
 
 
-    public void setInputs(int[] inputs) {
+    protected void setInputs(int[] inputs) {
         for (int i = 0; i < this.inputs.length; i++)
             this.inputs[i] = inputs[i];
     }
@@ -80,70 +82,38 @@ public class SnakeAIAgent extends SnakeAgent {
      * vector "inputs".
      *
      */
-    private void forwardPropagation() {
+    protected void forwardPropagation() {
         float sum = 0;
 
         // computing the activation values of the hidden layer neurons
         for (int i = 0; i < hiddenLayerSize; i++, sum = 0) {
             for (int j = 0; j < inputLayerSize; j++)
                 sum += inputs [j] * w1[j][i];
-            hiddenLayerOutput[i] = sigmoide(sum);
+            hiddenLayerOutput[i] = ActivationFunction.sigmoid(sum);
         }
 
         // computing the activation values of the output layer neurons
         for (int i = 0; i < outputLayerSize; i++, sum = 0) {
             for (int j = 0; j < hiddenLayerSize + 1; j++)
                 sum += hiddenLayerOutput[j] * w2[j][i];
-            output[i] = sigmoide(sum);
+            output[i] = ActivationFunction.sigmoid(sum);
         }
     }
 
-    private double sigmoide(float somaPesada) {
-        return 1 / (1 + Math.exp(-somaPesada));
-    }
-
-    private final int NEURON_NORTH = 0;
-    private final int NEURON_SOUTH = 1;
-    private final int NEURON_EAST = 2;
-    private final int NEURON_WEST = 3;
-    private Action previous = null;
+    protected final int NEURON_NORTH = 0;
+    protected final int NEURON_SOUTH = 1;
+    protected final int NEURON_EAST = 2;
+    protected final int NEURON_WEST = 3;
+    protected Action previous = null;
 
     @Override
     protected Action decide(Perception perception) {
-        Cell n = perception.getN();
-        Cell s = perception.getS();
-        Cell e = perception.getE();
-        Cell w = perception.getW();
-        Cell food = environment.getFood();
+        int[] vInputs = buildInputsFromPerception(perception);
 
-        setInputs(new int[] {
-                food.isToTheNorthOf(head) ? 1 : 0,
-                food.isToTheSouthOf(head) ? 1 : 0,
-                food.isToTheEastOf(head) ? 1 : 0,
-                food.isToTheWestOf(head) ? 1 : 0,
-                n != null && n.isFree() && (previous != null && previous.opposite() != Action.NORTH) ? (n.hasFood() ? 1 : 0) : -1,
-                s != null && s.isFree() && (previous != null && previous.opposite() != Action.SOUTH) ? (s.hasFood() ? 1 : 0) : -1,
-                e != null && e.isFree() && (previous != null && previous.opposite() != Action.EAST) ? (e.hasFood() ? 1 : 0) : -1,
-                w != null && w.isFree() && (previous != null && previous.opposite() != Action.WEST) ? (w.hasFood() ? 1 : 0) : -1
-        });
+        if (vInputs.length != inputLayerSize)
+            throw new IllegalArgumentException("Not enough inputs to fill the input layer (layer size: " + inputLayerSize + ")");
 
-//       setInputs(new int[] {
-//                food.isToTheNorthOf(head) ? Action.NORTH.getY() : Action.SOUTH.getY(),
-//                food.isToTheEastOf(head) ? Action.EAST.getX() : Action.WEST.getX(),
-//                n != null && n.isFree() ? (previous != null ? (previous.opposite() != Action.NORTH ? 1 : 0) : 1) : 0,
-//                s != null && s.isFree() ? (previous != null ? (previous.opposite() != Action.SOUTH ? 1 : 0) : 1) : 0,
-//                e != null && e.isFree() ? (previous != null ? (previous.opposite() != Action.EAST ? 1 : 0) : 1) : 0,
-//                w != null && w.isFree() ? (previous != null ? (previous.opposite() != Action.WEST ? 1 : 0) : 1) : 0,
-//        });
-
-//        setInputs(new int[] {
-//                food.isToTheNorthOf(head) ? Action.NORTH.getY() : Action.SOUTH.getY(),
-//                food.isToTheEastOf(head) ? Action.EAST.getX() : Action.WEST.getX(),
-//                n != null && n.isFree() && (previous != null && previous.opposite() != Action.NORTH) ? (n.hasFood() ? 1 : 0) : -1,
-//                s != null && s.isFree() && (previous != null && previous.opposite() != Action.SOUTH) ? (s.hasFood() ? 1 : 0) : -1,
-//                e != null && e.isFree() && (previous != null && previous.opposite() != Action.EAST) ? (e.hasFood() ? 1 : 0) : -1,
-//                w != null && w.isFree() && (previous != null && previous.opposite() != Action.WEST) ? (w.hasFood() ? 1 : 0) : -1
-//        });
+        setInputs(vInputs);
 
         forwardPropagation();
 //        printOutputs();
@@ -171,4 +141,6 @@ public class SnakeAIAgent extends SnakeAgent {
             System.out.print(String.format("%.2f", out) + " ");
         System.out.println("]");
     }
+
+    protected abstract int[] buildInputsFromPerception(Perception perception);
 }
