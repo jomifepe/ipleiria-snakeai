@@ -1,5 +1,7 @@
 package gui;
 
+import snake.EnvironmentAI;
+import snake.EnvironmentNonAI;
 import snake.ProblemType;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
@@ -9,7 +11,8 @@ import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
 import snake.snakeAI.ga.GAListener;
 import snake.snakeAI.ga.GeneticAlgorithm;
-import java.awt.BorderLayout;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -169,6 +172,20 @@ public class MainFrame extends JFrame implements GAListener {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File dataSet = fc.getSelectedFile();
                 problem = SnakeProblem.buildProblemFromFile(dataSet);
+
+                if (problem.getEnvironment() instanceof EnvironmentAI &&
+                        PanelParameters.getProblemType().ordinal() < ProblemType.ONE_AI.ordinal()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Invalid dataset for non-AI agent", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (problem.getEnvironment() instanceof EnvironmentNonAI &&
+                        PanelParameters.getProblemType().ordinal() > ProblemType.ADHOC.ordinal()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Invalid dataset for AI agent", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 problemPanel.textArea.setText(problem.toString());
                 problemPanel.textArea.setCaretPosition(0);
                 buttonRun.setEnabled(true);
@@ -250,7 +267,7 @@ public class MainFrame extends JFrame implements GAListener {
         seriesBestIndividual.add(source.getGeneration(), source.getBestInRun().getFitness());
         seriesAverage.add(source.getGeneration(), source.getAverageFitness());
 
-        problem.getEnvironment().setBestInRun(source.getBestInRun().clone());
+        ((EnvironmentAI) problem.getEnvironment()).setBestInRun(source.getBestInRun().clone());
 
         if (worker.isCancelled()) {
             e.setStopped(true);

@@ -1,6 +1,7 @@
 package gui;
 
 import snake.Environment;
+import snake.EnvironmentAI;
 import snake.EnvironmentListener;
 import snake.ProblemType;
 import util.ConsoleColor;
@@ -105,14 +106,11 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
                     setSimulationInfoVisible(true);
 
                     int environmentSimulations = mainFrame.getProblem().getNumEvironmentSimulations();
-                    Environment.random.setSeed(PanelParameters.getTFSeedValue());
+                    int seed = PanelParameters.getTFSeedValue();
 
                     for (int i = 0; i < environmentSimulations; i++) {
                         setSimulationInfoNumberText(String.valueOf(i + 1));
-                        environment.initialize (
-                            PanelParameters.getCBProblemTypeSelectedIndex() < ProblemType.ONE_AI.ordinal() ?
-                                    Environment.random.nextInt() : i
-                        );
+                        environment.initialize(i);
                         environmentUpdated();
                         environment.simulate();
                     }
@@ -192,7 +190,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
      */
     @Override
     public void snakeTypeChanged(int index) {
-        if (!mainFrame.isDatasetLoaded() || (index >= ProblemType.ONE_AI.ordinal() && !hasBestIndividualToSimulate())) {
+        if (!mainFrame.isDatasetLoaded() || (index > ProblemType.ADHOC.ordinal() && !hasBestIndividualToSimulate())) {
             buttonSimulate.setEnabled(false);
             return;
         }
@@ -201,11 +199,12 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     }
 
     public boolean hasBestIndividualToSimulate() {
-        // no loaded dataset
-        if (mainFrame.getProblem().getEnvironment() == null)
+        Environment environment = mainFrame.getProblem().getEnvironment();
+        if (environment == null)
             return false;
-        // no best individual / the dataset didn't run
-        if (!mainFrame.getProblem().getEnvironment().hasBestInRun())
+        if (!(environment instanceof EnvironmentAI))
+            return false;
+        if (!((EnvironmentAI) environment).hasBestInRun())
             return false;
 
         return true;

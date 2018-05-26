@@ -1,6 +1,8 @@
 package snake.snakeAI;
 
 import snake.Environment;
+import snake.EnvironmentAI;
+import snake.EnvironmentNonAI;
 import snake.snakeAI.ga.Problem;
 
 import java.io.File;
@@ -13,11 +15,19 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
     final private int environmentSize;
     final private int maxIterations;
     final private int numEnvironmentRuns;
+    final private Environment environment;
     final private List<Integer> numInputs;
     final private List<Integer> numHiddenUnits;
     final private List<Integer> numOutputs;
 
-    final private Environment environment;
+    public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns) {
+        this.environmentSize = environmentSize;
+        this.maxIterations = maxIterations;
+        this.numEnvironmentRuns = numEnvironmentRuns;
+        this.numInputs = this.numHiddenUnits = this.numOutputs = null;
+
+        this.environment = new EnvironmentNonAI(environmentSize, maxIterations);
+    }
 
     public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns,
                         List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs) {
@@ -29,13 +39,13 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         this.numHiddenUnits = numHiddenUnits;
         this.numOutputs = numOutputs;
 
-        environment = new Environment(environmentSize, maxIterations);
-        environment.setNNDimensions(numInputs, numHiddenUnits, numOutputs);
+        environment = new EnvironmentAI(environmentSize, maxIterations);
+        ((EnvironmentAI) environment).setNNDimensions(numInputs, numHiddenUnits, numOutputs);
     }
 
     @Override
     public SnakeIndividual getNewIndividual() {
-        int totalGenomeSize = environment.getGenomeSizes().stream().mapToInt(Integer::intValue).sum();
+        int totalGenomeSize = ((EnvironmentAI) environment).getGenomeSizes().stream().mapToInt(Integer::intValue).sum();
         return new SnakeIndividual(this, totalGenomeSize);
     }
 
@@ -78,26 +88,33 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         List<Integer> numHiddenUnits = new ArrayList<>();
         List<Integer> numOutputs = new ArrayList<>();
 
-        numInputs.add(Integer.parseInt(parametersValues.get(3)));
+        if (parametersValues.size() > 3) {
+            numInputs.add(Integer.parseInt(parametersValues.get(3)));
 
-        if (parametersValues.size() > 6) {
-            numInputs.add(Integer.parseInt(parametersValues.get(4)));
-            numHiddenUnits.add(Integer.parseInt(parametersValues.get(5)));
-            numHiddenUnits.add(Integer.parseInt(parametersValues.get(6)));
-            numOutputs.add(Integer.parseInt(parametersValues.get(7)));
-            numOutputs.add(Integer.parseInt(parametersValues.get(8)));
-        } else {
-            numHiddenUnits.add(Integer.parseInt(parametersValues.get(4)));
-            numOutputs.add(Integer.parseInt(parametersValues.get(5)));
+            if (parametersValues.size() > 6) {
+                numInputs.add(Integer.parseInt(parametersValues.get(4)));
+                numHiddenUnits.add(Integer.parseInt(parametersValues.get(5)));
+                numHiddenUnits.add(Integer.parseInt(parametersValues.get(6)));
+                numOutputs.add(Integer.parseInt(parametersValues.get(7)));
+                numOutputs.add(Integer.parseInt(parametersValues.get(8)));
+            } else {
+                numHiddenUnits.add(Integer.parseInt(parametersValues.get(4)));
+                numOutputs.add(Integer.parseInt(parametersValues.get(5)));
+            }
+
+            return new SnakeProblem(
+                    environmentSize,
+                    maxIterations,
+                    numEnvironmentRuns,
+                    numInputs,
+                    numHiddenUnits,
+                    numOutputs);
         }
 
         return new SnakeProblem(
                 environmentSize,
                 maxIterations,
-                numEnvironmentRuns,
-                numInputs,
-                numHiddenUnits,
-                numOutputs);
+                numEnvironmentRuns);
     }
 
     // MODIFY IF YOU DEFINE OTHER PARAMETERS
@@ -110,17 +127,21 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         sb.append("Maximum number of iterations: ");
         sb.append(maxIterations);
         sb.append("\n");
-        sb.append("Number of inputs: ");
-        sb.append(numInputs);
-        sb.append("\n");
-        sb.append("Number of hidden units: ");
-        sb.append(numHiddenUnits);
-        sb.append("\n");
-        sb.append("Number of outputs: ");
-        sb.append(numOutputs);
-        sb.append("\n");
         sb.append("Number of environment simulations: ");
         sb.append(numEnvironmentRuns);
+
+        if (environment instanceof EnvironmentAI) {
+            sb.append("\n");
+            sb.append("Number of inputs: ");
+            sb.append(numInputs);
+            sb.append("\n");
+            sb.append("Number of hidden units: ");
+            sb.append(numHiddenUnits);
+            sb.append("\n");
+            sb.append("Number of outputs: ");
+            sb.append(numOutputs);
+        }
+
         return sb.toString();
     }
 
