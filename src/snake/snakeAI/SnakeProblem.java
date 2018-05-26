@@ -35,12 +35,8 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
     @Override
     public SnakeIndividual getNewIndividual() {
-        int sumInputs = numInputs.stream().mapToInt(Integer::intValue).sum();
-        int sumHiddenUnits = numHiddenUnits.stream().mapToInt(Integer::intValue).sum();
-        int sumOutputs = numOutputs.stream().mapToInt(Integer::intValue).sum();
-
-        int genomeSize = (sumInputs + 1) * (sumHiddenUnits) + (sumHiddenUnits + 1) * sumOutputs;
-        return new SnakeIndividual(this, genomeSize);
+        int totalGenomeSize = environment.getGenomeSizes().stream().mapToInt(Integer::intValue).sum();
+        return new SnakeIndividual(this, totalGenomeSize);
     }
 
     public Environment getEnvironment() {

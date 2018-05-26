@@ -1,16 +1,11 @@
 package snake.snakeAI;
 
-import gui.PanelParameters;
 import snake.Environment;
-import snake.ProblemType;
 import snake.SnakeAgent;
 import snake.snakeAI.ga.RealVectorIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
-import util.ConsoleColor;
-import util.ConsoleUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +14,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     private double weight;
     private double bestMoves;
     private double bestTail;
+    private int maxFood;
 
     public SnakeIndividual(SnakeProblem problem, int size /*TODO?*/) {
         super(problem, size);
@@ -29,6 +25,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         this.weight = original.weight;
         this.bestMoves = original.bestMoves;
         this.bestTail = original.bestTail;
+        this.maxFood = original.maxFood;
     }
 
     /*
@@ -60,19 +57,24 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
             /* getting the agents currently on the environment */
             agents = environment.getAgents();
 
-            for (SnakeAgent agent : agents) {
-                if (!(agent instanceof SnakeAIAgent))
+            for (int j = 0; j < agents.size(); j++) {
+                if (!(agents.get(j) instanceof SnakeAIAgent)) {
                     throw new IllegalArgumentException("Operation not supported for " +
-                            agent.getClass().getSimpleName());
+                            agents.get(j).getClass().getSimpleName());
+                }
 
                 /* setting the agent's neural network weights */
-                ((SnakeAIAgent) agent).setWeights(genome);
+                ((SnakeAIAgent) agents.get(j)).setWeights(genome);
             }
 
             environment.simulate();
             movements += environment.getIterations();
             for (SnakeAgent agent : agents) {
-                food += agent.getTailSize();
+                int agentFood = agent.getTailSize();
+                if (agentFood > maxFood)
+                    maxFood = agentFood;
+
+                food += agentFood;
                 stepsTakenSinceLastFood += agent.getStepsTakenSinceLastFood();
             }
         }
@@ -81,7 +83,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         bestTail = (double) food / numSimulations;
 
         boolean stalling = stepsTakenSinceLastFood > (100 * agents.size());
-        ConsoleUtils.println(stalling ? ConsoleColor.BRIGHT_RED : ConsoleColor.BRIGHT_GREEN, String.valueOf(stepsTakenSinceLastFood));
+//        ConsoleUtils.println(stalling ? ConsoleColor.BRIGHT_RED : ConsoleColor.BRIGHT_GREEN, String.valueOf(stepsTakenSinceLastFood));
 
         return fitness = (food << 10) - (movements >> (stalling ? 3 : 5));
     }
@@ -105,10 +107,13 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         sb.append("Fitness: ");
         sb.append(fitness);
         sb.append(System.lineSeparator());
-        sb.append("Food pieces eaten: ");
+        sb.append("Mean of food pieces eaten: ");
         sb.append(String.format(Locale.US, "%.1f", bestTail));
         sb.append(System.lineSeparator());
-        sb.append("Movements: ");
+        sb.append("Maximum of food pieces eaten: ");
+        sb.append(maxFood);
+        sb.append(System.lineSeparator());
+        sb.append("Movements mean: ");
         sb.append(String.format(Locale.US, "%.1f", bestMoves));
 
         return sb.toString();

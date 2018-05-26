@@ -27,6 +27,8 @@ public class Environment {
     private List<Integer> numNNHiddenUnits;
     private List<Integer> numNNOutputs;
 
+    private List<Integer> genomeSizes;
+
     public Environment(int size, int maxIterations) {
         random = new Random();
         this.maxIterations = maxIterations;
@@ -43,6 +45,7 @@ public class Environment {
         this.numNNInputs = new ArrayList<>();
         this.numNNHiddenUnits = new ArrayList<>();
         this.numNNOutputs = new ArrayList<>();
+        this.genomeSizes = new ArrayList<>();
     }
 
     public void initialize(int seed) {
@@ -149,21 +152,21 @@ public class Environment {
     }
 
     public void simulate() {
-        boolean aliveSnakes = true;
+//        boolean aliveSnakes = true;
         for (int i = 0; i < maxIterations; i++) {
-            if (!aliveSnakes)
-                break;
+//            if (!aliveSnakes)
+//                break;
 
             for (SnakeAgent agent : agents) {
                 if (!agent.isAlive())
-                    continue;
+                    return;
 
                 agent.act(this);
                 fireUpdatedEnvironment();
             }
 
             /* verfifies if there's any snake left */
-            aliveSnakes = agents.stream().anyMatch(SnakeAgent::isAlive);
+//            aliveSnakes = agents.stream().anyMatch(SnakeAgent::isAlive);
             numIterations++;
         }
     }
@@ -184,6 +187,17 @@ public class Environment {
         this.numNNInputs = numInputs;
         this.numNNHiddenUnits = numHiddenUnits;
         this.numNNOutputs = numOutputs;
+
+
+        for (int i = 0; i < numInputs.size(); i++) {
+            genomeSizes.add(((numInputs.get(i) + 1) * numHiddenUnits.get(i)) +
+                    ((numHiddenUnits.get(i) + 1) * numOutputs.get(i))
+            );
+        }
+    }
+
+    public List<Integer> getGenomeSizes() {
+        return genomeSizes;
     }
 
     public Cell getNorthCell(Cell cell) {
