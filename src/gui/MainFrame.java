@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.scene.layout.Pane;
 import snake.EnvironmentAI;
 import snake.EnvironmentNonAI;
 import snake.ProblemType;
@@ -173,6 +174,11 @@ public class MainFrame extends JFrame implements GAListener {
                 File dataSet = fc.getSelectedFile();
                 problem = SnakeProblem.buildProblemFromFile(dataSet);
 
+                if (problem == null) {
+                    JOptionPane.showMessageDialog(this,
+                            "Failed to parse dataset, check your parameters", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (problem.getEnvironment() instanceof EnvironmentAI &&
                         PanelParameters.getProblemType().ordinal() < ProblemType.ONE_AI.ordinal()) {
                     JOptionPane.showMessageDialog(this,
@@ -212,7 +218,8 @@ public class MainFrame extends JFrame implements GAListener {
             seriesBestIndividual.clear();
             seriesAverage.clear();
 
-            Random random = new Random(Integer.parseInt(panelParameters.textFieldSeed.getText()));
+            int seed = Integer.parseInt(panelParameters.textFieldSeed.getText());
+            Random random = new Random(seed);
             ga = new GeneticAlgorithm<>(
                     Integer.parseInt(panelParameters.textFieldN.getText()),
                     Integer.parseInt(panelParameters.textFieldGenerations.getText()),
@@ -316,6 +323,10 @@ public class MainFrame extends JFrame implements GAListener {
                     while (experimentsFactory.hasMoreExperiments()) {
                         try {
                             Experiment experiment = experimentsFactory.nextExperiment();
+
+                            ProblemType problemType = ((SnakeExperimentsFactory) experiment.getFactory()).getProblemType();
+                            PanelParameters.setCBSelectionProblemType(problemType);
+
                             experiment.run();
 
                         } catch (IOException e1) {

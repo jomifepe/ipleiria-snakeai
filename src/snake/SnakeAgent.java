@@ -15,7 +15,8 @@ public abstract class SnakeAgent {
     protected List<TailCell> tail;
     protected Environment environment;
     protected boolean alive;
-    private int stepsTakenSinceLastFood;
+    protected int stepsTakenSinceLastFood;
+    protected int movements;
 
     public SnakeAgent(Cell cell, Color headColor, Color tailColor) {
         this.alive = true;
@@ -27,6 +28,7 @@ public abstract class SnakeAgent {
         this.colorTail = tailColor;
         this.tail = new LinkedList<>();
         this.stepsTakenSinceLastFood = 0;
+        this.movements = 0;
     }
 
     Action previousAction = null;
@@ -57,6 +59,7 @@ public abstract class SnakeAgent {
     protected void execute(Action action) {
         if (action == null) {
             alive = false;
+            stepsTakenSinceLastFood = 0;
             return;
         }
 
@@ -97,6 +100,7 @@ public abstract class SnakeAgent {
         }
 
         stepsTakenSinceLastFood++;
+        movements++;
         alive = (nextCell != null);
     }
 
@@ -162,5 +166,9 @@ public abstract class SnakeAgent {
 
     public int getStepsTakenSinceLastFood() {
         return this.stepsTakenSinceLastFood;
+    }
+
+    public int getMovements() {
+        return movements;
     }
 }

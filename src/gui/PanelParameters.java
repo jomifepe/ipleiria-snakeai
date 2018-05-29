@@ -109,6 +109,10 @@ public class PanelParameters extends PanelAtributesValue {
         return (ProblemType) comboBoxSelectionProblemType.getSelectedItem();
     }
 
+    public static void setCBSelectionProblemType(ProblemType problemType) {
+        PanelParameters.comboBoxSelectionProblemType.setSelectedItem(problemType);
+    }
+
     public SelectionMethod<SnakeIndividual, SnakeProblem> getSelectionMethod() {
         switch (comboBoxSelectionMethods.getSelectedIndex()) {
             case 0:

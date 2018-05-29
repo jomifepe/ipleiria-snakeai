@@ -31,6 +31,6 @@ public class MutationAddOrSubtract<I extends RealVectorIndividual> extends Mutat
     
     @Override
     public String toString(){
-        return "Gaussian";
+        return "AddOrSubtract";
     }
 }

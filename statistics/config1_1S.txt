@@ -1,61 +1,32 @@
 Runs: 10
-
-
-Population size: 50, 100, 200
-
-
-Max generations: 100
-
-
+Population size: 100
+Max generations: 1000
 
 //--------------------------------
 
-
-
-Selection: tournament
-
-
-Tournament size: 4
-
-
+Problem type: one_ai
 
 //--------------------------------
 
+Selection: tournament, roullette
+Tournament size: 10
 
+//--------------------------------
 
 Recombination: one_cut
-
-
 Recombination probability: 0.7
 
-
-
 //--------------------------------
 
-
-
-Mutation: gaussian
-
-
-Mutation probability: 0.015
-
-
+Mutation: gaussian, add_or_subtract
+Mutation probability: 0.015, 0.2, 0.9
 Delta: 0.3
 
-
-
 //--------------------------------
 
-
-
-Problem file: datasets/dataset1_8HiddenLayers.txt
-
-
+Problem file: datasets/dataset1_1S_8I8H.txt
 
 //--------------------------------
-
-
 
 Statistic: BestIndividual
-
 Statistic: BestAverage

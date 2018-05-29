@@ -3,8 +3,10 @@ package snake.snakeAI;
 import snake.Environment;
 import snake.EnvironmentAI;
 import snake.EnvironmentNonAI;
+import snake.ProblemType;
 import snake.snakeAI.ga.Problem;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,13 +86,12 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         int maxIterations = Integer.parseInt(parametersValues.get(1));
         int numEnvironmentRuns = Integer.parseInt(parametersValues.get(2));
 
-        List<Integer> numInputs = new ArrayList<>();
-        List<Integer> numHiddenUnits = new ArrayList<>();
-        List<Integer> numOutputs = new ArrayList<>();
-
         if (parametersValues.size() > 3) {
-            numInputs.add(Integer.parseInt(parametersValues.get(3)));
+            List<Integer> numInputs = new ArrayList<>();
+            List<Integer> numHiddenUnits = new ArrayList<>();
+            List<Integer> numOutputs = new ArrayList<>();
 
+            numInputs.add(Integer.parseInt(parametersValues.get(3)));
             if (parametersValues.size() > 6) {
                 numInputs.add(Integer.parseInt(parametersValues.get(4)));
                 numHiddenUnits.add(Integer.parseInt(parametersValues.get(5)));

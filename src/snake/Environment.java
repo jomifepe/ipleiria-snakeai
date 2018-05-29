@@ -20,6 +20,7 @@ public abstract class Environment {
     protected Food food;
     protected final int maxIterations;
     protected int numIterations;
+    protected int foodEaten;
 
     public Environment(int size, int maxIterations) {
         random = new Random();
@@ -36,8 +37,7 @@ public abstract class Environment {
         this.agents = new ArrayList<>();
     }
 
-    public void initialize(int seed) {
-//        random.setSeed(seed);
+    public void initialize() {
         resetEnvironment();
         placeAgents();
         placeFood();
@@ -87,21 +87,16 @@ public abstract class Environment {
     }
 
     public void simulate() {
-//        boolean aliveSnakes = true;
-        for (int i = 0; i < maxIterations; i++) {
-//            if (!aliveSnakes)
-//                break;
 
+        for (int i = 0; i < maxIterations; i++) {
             for (SnakeAgent agent : agents) {
-                if (!agent.isAlive())
+                if (!agent.isAlive()) {
                     return;
+                }
 
                 agent.act(this);
                 fireUpdatedEnvironment();
             }
-
-            /* verfifies if there's any snake left */
-//            aliveSnakes = agents.stream().anyMatch(SnakeAgent::isAlive);
             numIterations++;
         }
     }

@@ -22,20 +22,6 @@ public class SnakeAIAgentV1 extends SnakeAIAgent {
         Cell w = perception.getW();
         Cell food = environment.getFood();
 
-//        int[] distancesToFood = {
-//                n != null ? Math.abs(food.getLine() - n.getLine()) + (food.getColumn() - n.getColumn()) : Integer.MAX_VALUE,
-//                s != null ? Math.abs(food.getLine() - s.getLine()) + (food.getColumn() - s.getColumn()) : Integer.MAX_VALUE,
-//                e != null ? Math.abs(food.getLine() - e.getLine()) + (food.getColumn() - e.getColumn()): Integer.MAX_VALUE,
-//                w != null ? Math.abs(food.getLine() - w.getLine()) + (food.getColumn() - w.getColumn()) : Integer.MAX_VALUE
-//        };
-//
-//        int decision = 0;
-//        int minDistance = distancesToFood[0];
-//        for (int i = 0; i < 4; i++) {
-//            if (distancesToFood[i] < minDistance)
-//                decision = i;
-//        }
-
         return new int[] {
                 food.isToTheNorthOf(head) ? 1 : 0,
                 food.isToTheSouthOf(head) ? 1 : 0,

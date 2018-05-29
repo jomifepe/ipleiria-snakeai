@@ -10,6 +10,7 @@ import snake.snakeRandom.SnakeRandomAgent;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -42,30 +43,26 @@ public class EnvironmentAI extends Environment {
         switch (PanelParameters.getProblemType()) {
             case ONE_AI:
                 SnakeAIAgent agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
-                if (hasBestInRun()) {
-                    agent.setWeights(bestInRun.getGenome());
-                }
                 agents.add(agent);
+
+                if (hasBestInRun()) {
+                    setWeights(bestInRun.getGenome());
+                }
                 break;
             case TWO_IDENTICAL_AI:
                 agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
-                if (hasBestInRun()) {
-                    agent.setWeights(bestInRun.getGenome());
-                }
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
                 agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
-                if (hasBestInRun()) {
-                    agent.setWeights(bestInRun.getGenome());
-                }
                 agents.add(agent);
+
+                if (hasBestInRun()) {
+                    setWeights(bestInRun.getGenome());
+                }
                 break;
             case TWO_DIFFERENT_AI:
                 agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
-                if (hasBestInRun()) {
-                    agent.setWeights(bestInRun.getGenome());
-                }
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
@@ -75,9 +72,11 @@ public class EnvironmentAI extends Environment {
                 } else {
                     agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(1), numNNHiddenUnits.get(1), numNNOutputs.get(1), Color.ORANGE);
                 }
-                if (bestInRun != null)
-                    agentV2.setWeights(bestInRun.getGenome());
                 agents.add(agentV2);
+
+                if (hasBestInRun()) {
+                    setWeights(bestInRun.getGenome());
+                }
                 break;
         }
     }
@@ -99,17 +98,22 @@ public class EnvironmentAI extends Environment {
         this.numNNHiddenUnits = numHiddenUnits;
         this.numNNOutputs = numOutputs;
 
-
         for (int i = 0; i < numInputs.size(); i++) {
-            genomeSizes.add(((numInputs.get(i) + 1) * numHiddenUnits.get(i)) +
-                    ((numHiddenUnits.get(i) + 1) * numOutputs.get(i))
+            genomeSizes.add((numInputs.get(i) + 1) * numHiddenUnits.get(i) +
+                    (numHiddenUnits.get(i) + 1) * numOutputs.get(i)
             );
         }
     }
 
-    public void setWeights(double[] genomeWeights) {
-        for (SnakeAgent agent : agents) {
-            ((SnakeAIAgent) agent).setWeights(genomeWeights);
+    public void setWeights(double[] genome) {
+        for (int i = 0, start = 0; i < agents.size(); i++) {
+            if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
+                ((SnakeAIAgent) agents.get(i)).setWeights(Arrays.copyOfRange(genome, start, start + genomeSizes.get(i)));
+                start = genomeSizes.get(i);
+                continue;
+            }
+
+            ((SnakeAIAgent) agents.get(i)).setWeights(genome);
         }
     }
 

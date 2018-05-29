@@ -1,5 +1,6 @@
 package snake.snakeAI;
 
+import snake.ProblemType;
 import snake.snakeAI.ga.experiments.*;
 import snake.snakeAI.ga.GAListener;
 import snake.snakeAI.ga.GeneticAlgorithm;
@@ -24,6 +25,7 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
     private double recombinationProbability;
     private double mutationProbability;
     private int tournamentSize = -1;
+    private ProblemType problemType;
     private double delta;
 
     public SnakeExperimentsFactory(File configFile) throws IOException {
@@ -35,6 +37,19 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         numRuns = Integer.parseInt(getParameterValue("Runs"));
         populationSize = Integer.parseInt(getParameterValue("Population size"));
         maxGenerations = Integer.parseInt(getParameterValue("Max generations"));
+
+        // PROBLEM TYPE
+        switch (getParameterValue("Problem type")) {
+            case "one_ai":
+                problemType = ProblemType.ONE_AI;
+                break;
+            case "two_identical_ai":
+                problemType = ProblemType.TWO_IDENTICAL_AI;
+                break;
+            case "two_different_ai":
+                problemType = ProblemType.TWO_DIFFERENT_AI;
+                break;
+        }
 
         //SELECTION
         switch(getParameterValue("Selection")) {
@@ -120,17 +135,29 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         return null;
     }
 
+    public SnakeProblem getProblem() {
+        return problem;
+    }
+
+    public ProblemType getProblemType() {
+        return problemType;
+    }
+
     private String getExperimentValuesString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(problemType.name().toLowerCase() + "\t");
         sb.append(populationSize + "\t");
         sb.append(maxGenerations + "\t");
         sb.append(selection + "\t");
 
-        if (selection instanceof Tournament)
+        if (selection instanceof Tournament) {
             sb.append(tournamentSize + "\t");
+        } else {
+            sb.append("-" + "\t");
+        }
 
         sb.append(recombination + "\t");
-        sb.append(recombinationProbability + "\t");
+        sb.append(String.format( "%.1f", recombinationProbability) + "\t");
         sb.append(mutation + "\t");
         sb.append(mutationProbability);
 
@@ -150,7 +177,7 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
         sb.append("Recombination type: " + recombination + System.lineSeparator());
         sb.append("Recombination prob.: " + recombinationProbability + System.lineSeparator());
         sb.append("Mutation type: " + mutation + System.lineSeparator());
-        sb.append("Mutation prob.:" + mutationProbability);
+        sb.append("Mutation prob.: " + mutationProbability);
 
         return sb.toString();
     }

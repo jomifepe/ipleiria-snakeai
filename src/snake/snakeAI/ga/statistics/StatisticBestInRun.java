@@ -1,5 +1,9 @@
 package snake.snakeAI.ga.statistics;
 
+import gui.PanelParameters;
+import snake.Environment;
+import snake.ProblemType;
+import snake.snakeAI.SnakeExperimentsFactory;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
@@ -30,28 +34,28 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
     @Override
     public void experimentEnded(ExperimentEvent e) {
+        ProblemType problemType = PanelParameters.getProblemType();
+        String strProblemType = problemType.name().toLowerCase();
+
         String filePath = "statistics/";
-        String fileName = "best_per_experiment";
+        String fileName = strProblemType + "_best_per_experiment";
 
         /* XLS file */
         String xlsFullPath = filePath + fileName + ".xls";
 
         StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Problem type\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
         xlsHeaders.append("Selection type\t");
-
-        Parameter selectionType = e.getSource().getFactory().getParameters("Selection");
-        if (selectionType.values[selectionType.activeValueIndex].matches("tournament")) {
-            xlsHeaders.append("Tournament size\t");
-        }
-
+        xlsHeaders.append("Tournament size\t");
         xlsHeaders.append("Recombination type\t");
         xlsHeaders.append("Recombination prob.\t");
         xlsHeaders.append("Mutation type\t");
         xlsHeaders.append("Mutation prob.\t");
         xlsHeaders.append("Fitness\t");
-        xlsHeaders.append("Food Pieces\t");
+        xlsHeaders.append("Food Mean\t");
+        xlsHeaders.append("Food Max\t");
         xlsHeaders.append("Movements\r\n");
 
         if (!FileOperations.fileExists(xlsFullPath)) {
@@ -67,11 +71,14 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
         StringBuilder txtIndividual = new StringBuilder();
         txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
-        txtIndividual.append("Food Pieces: " + ((SnakeIndividual) bestInExperiment).getMeanFood() + "\r\n");
-        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getMeanMovements());
+        txtIndividual.append("Food Mean: " + ((SnakeIndividual) bestInExperiment).getFoodMean() + "\r\n");
+        txtIndividual.append("Food Max: " + ((SnakeIndividual) bestInExperiment).getFoodMax() + "\r\n");
+        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getMovementsMean() + "\r\n");
+        txtIndividual.append("\r\n" + "//--------------------------------" + "\r\n");
 
         FileOperations.appendToTextFile(txtFullPath,
-                e.getSource().getFactory().prettyPrint() + "\n" + txtIndividual.toString() + "\r\n"
+                "Problem type: " + strProblemType + "\r\n" +
+                        e.getSource().getFactory().prettyPrint() + "\r\n" + txtIndividual.toString() + "\r\n"
         );
     }
 }

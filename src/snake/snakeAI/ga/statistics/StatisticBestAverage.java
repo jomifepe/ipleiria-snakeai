@@ -1,5 +1,8 @@
 package snake.snakeAI.ga.statistics;
 
+import gui.PanelParameters;
+import snake.ProblemType;
+import snake.snakeAI.SnakeExperimentsFactory;
 import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
 import snake.snakeAI.ga.GAListener;
@@ -31,21 +34,20 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
 
     @Override
     public void experimentEnded(ExperimentEvent e) {
+        ProblemType problemType = PanelParameters.getProblemType();
+        String strProblemType = problemType.name().toLowerCase();
+
         String filePath = "statistics/";
-        String fileName = "average_fitness";
+        String fileName = strProblemType + "_average_fitness";
 
         String xlsFullPath = filePath + fileName + ".xls";
 
         StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Problem type\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
         xlsHeaders.append("Selection type\t");
-
-        Parameter selectionType = e.getSource().getFactory().getParameters("Selection");
-        if (selectionType.values[selectionType.activeValueIndex].matches("tournament")) {
-            xlsHeaders.append("Tournament size\t");
-        }
-
+        xlsHeaders.append("Tournament size\t");
         xlsHeaders.append("Recombination type\t");
         xlsHeaders.append("Recombination prob.\t");
         xlsHeaders.append("Mutation type\t");
@@ -56,11 +58,13 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
         double averageFitness = Maths.average(values);
         double sd = Maths.standardDeviation(values, averageFitness);
 
-        if (!FileOperations.fileExists(xlsFullPath))
+        if (!FileOperations.fileExists(xlsFullPath)) {
             FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
+        }
         
         FileOperations.appendToTextFile(xlsFullPath,
-                e.getSource() + "\t" + averageFitness + "\t" + sd + "\r\n"
+                e.getSource() + "\t" +
+                        String.format("%.1f", averageFitness) + "\t" + String.format("%.4f", sd) + "\r\n"
         );
     }    
 }
