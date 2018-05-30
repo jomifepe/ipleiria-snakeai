@@ -1,7 +1,6 @@
 package snake.snakeAI;
 
 import gui.PanelParameters;
-import snake.Environment;
 import snake.EnvironmentAI;
 import snake.ProblemType;
 import snake.SnakeAgent;
@@ -9,14 +8,15 @@ import snake.snakeAI.ga.RealVectorIndividual;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeIndividual> {
 
-    private double movementsMean;
-    private int movementsMax;
-    private double foodMean;
-    private int foodMax;
+    private double avgMovements;
+    private double avgFoods;
+    private int bestMovements;
+    private int bestFoods;
+    private int numBestSimulation;
+    private int numSimulations;
 
     public SnakeIndividual(SnakeProblem problem, int size /*TODO?*/) {
         super(problem, size);
@@ -24,10 +24,12 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
     public SnakeIndividual(SnakeIndividual original) {
         super(original);
-        this.movementsMean = original.movementsMean;
-        this.movementsMax = original.movementsMax;
-        this.foodMean = original.foodMean;
-        this.foodMax = original.foodMax;
+        this.avgMovements = original.avgMovements;
+        this.bestMovements = original.bestMovements;
+        this.avgFoods = original.avgFoods;
+        this.bestFoods = original.bestFoods;
+        this.numBestSimulation = original.numBestSimulation;
+        this.numSimulations = original.numSimulations;
     }
 
     /*
@@ -51,8 +53,8 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         }
 
         EnvironmentAI environment = (EnvironmentAI) this.problem.getEnvironment();
-        int numSimulations = problem.getNumEvironmentSimulations();
-        List<SnakeAgent> agents = new ArrayList<>();
+        numSimulations = problem.getNumEvironmentSimulations();
+        List<SnakeAgent> agents;
         int stepsTakenSinceLastFood = 0;
 
         int penalty = 0; // used with two different snakes
@@ -62,8 +64,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         int movements = 0, food = 0;
         for (int i = 0; i < numSimulations; i++) {
             /* generating the SnakeAIAgent and the food */
-            Environment.random.setSeed(i);
-            environment.initialize();
+            environment.initialize(i);
             /* getting the agents currently on the environment */
             agents = environment.getAgents();
             /* setting the agent's neural network weights */
@@ -90,29 +91,27 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
                 auxAgentsMovementsSum += currentAgentMovements;
             }
 
-            if (auxAgentsFoodSum > foodMax) {
-                foodMax = auxAgentsFoodSum;
-                movementsMax = auxAgentsMovementsSum;
+            if (auxAgentsFoodSum > bestFoods) {
+                bestFoods = auxAgentsFoodSum;
+                bestMovements = auxAgentsMovementsSum;
+                numBestSimulation = i + 1;
             }
         }
 
-        /* penalty to prevent one of the two different snakes from slacking */
-        if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
-            if(totalIndividualSnakeFoods[0]  != totalIndividualSnakeFoods[1])
-                penalty = Math.abs(totalIndividualSnakeFoods[0] - totalIndividualSnakeFoods[1]) << 10;
-            if(totalIndividualSnakeMovements[0] != totalIndividualSnakeMovements[1])
-                penalty += Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << 5;
-
-//            penalty = (Math.abs(totalIndividualSnakeFoods[0] - totalIndividualSnakeFoods[1]) << 10) +
-//                    (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << 5);
-        }
-
-        movementsMean = (double) movements / numSimulations;
-        foodMean = (double) food / numSimulations;
-        stepsTakenSinceLastFood = stepsTakenSinceLastFood / (numSimulations + agents.size());
+        avgMovements = (double) movements / numSimulations;
+        avgFoods = (double) food / numSimulations;
+        stepsTakenSinceLastFood = stepsTakenSinceLastFood / numSimulations;
 
         boolean stalling = stepsTakenSinceLastFood > 100;
-        return fitness = (food << 10) - (movements >> (stalling ? 1 : 5)) - penalty;
+
+        /* penalty to prevent one of the two different snakes from slacking */
+        if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
+            penalty = (Math.abs(totalIndividualSnakeFoods[0] - totalIndividualSnakeFoods[1]) << 11) +
+                    (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << (stalling ? 2 : 5));
+        }
+
+//        ConsoleUtils.println(stalling ? ConsoleColor.BRIGHT_RED : ConsoleColor.BRIGHT_GREEN, String.valueOf(stepsTakenSinceLastFood));
+        return fitness = (food << 11) - (movements >> (stalling ? 2 : 5)) - penalty;
     }
 
     public double[] getGenome(){
@@ -123,35 +122,36 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format( "%.1f", fitness) + "\t");
-        sb.append(String.format( "%.1f", foodMean) + "\t");
-        sb.append(foodMax + "\t");
-        sb.append(String.format( "%.1f", movementsMean));
+        sb.append(String.format( "%.1f", avgFoods) + "\t");
+        sb.append(bestFoods + "\t");
+        sb.append(String.format( "%.1f", avgMovements));
 
         return sb.toString();
     }
 
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Fitness: ");
-        sb.append(fitness);
+        sb.append("Solution found on simulation ").append(numBestSimulation).append("/").append(numSimulations);
         sb.append(System.lineSeparator());
         sb.append(System.lineSeparator());
+
+        sb.append("▪  Fitness: ").append(fitness);
+        sb.append(System.lineSeparator());
+        sb.append(System.lineSeparator());
+
         sb.append("Food pieces eaten: ");
         sb.append(System.lineSeparator());
-        sb.append("▪  Average from 10 simulations: ");
-        sb.append(String.format( "%.1f", foodMean));
+        sb.append("▪  Average from 10 simulations: ").append(String.format( "%.1f", avgFoods));
         sb.append(System.lineSeparator());
-        sb.append("▪  Best run: ");
-        sb.append(foodMax);
+        sb.append("▪  Best run: ").append(bestFoods);
         sb.append(System.lineSeparator());
         sb.append(System.lineSeparator());
+
         sb.append("Movements: ");
         sb.append(System.lineSeparator());
-        sb.append("▪  Average from 10 simulations: ");
-        sb.append(String.format("%.1f", movementsMean));
+        sb.append("▪  Average from 10 simulations: ").append(String.format("%.1f", avgMovements));
         sb.append(System.lineSeparator());
-        sb.append("▪  Best run: ");
-        sb.append(movementsMax);
+        sb.append("▪  Best run: ").append(bestMovements);
 
         return sb.toString();
     }
@@ -172,15 +172,15 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         return new SnakeIndividual(this);
     }
 
-    public double getMovementsMean() {
-        return movementsMean;
+    public double getAvgMovements() {
+        return avgMovements;
     }
 
-    public double getFoodMean() {
-        return foodMean;
+    public double getAvgFoods() {
+        return avgFoods;
     }
 
-    public int getFoodMax() {
-        return foodMax;
+    public int getBestFoods() {
+        return bestFoods;
     }
 }

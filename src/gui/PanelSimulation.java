@@ -30,6 +30,10 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
     private JLabel simulationInfoSnake1FoodCount = new JLabel("0");
     private JLabel simulationInfoSnake2FoodLabel = new JLabel("Foods eaten by snake 2:");
     private JLabel simulationInfoSnake2FoodCount = new JLabel("0");
+    private JLabel simulationInfoTotalFoodsLabel = new JLabel("Total of foods eaten:");
+    private JLabel simulationInfoTotalFoodsCount = new JLabel("0");
+    private JLabel simulationInfoSnakesTotalMovementsLabel = new JLabel("Total of movements:");
+    private JLabel simulationInfoSnakesTotalMovementsCount = new JLabel("0");
 
     private final JPanel panelSimulationButtons = new JPanel();
     private final JButton buttonSimulate = new JButton("Simulate");
@@ -45,19 +49,33 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         environmentPanel.setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
         setLayout(new BorderLayout());
 
-        panelSimulationInfo.setLayout(new GridLayout(3, 2));
+        Font labelFont = simulationInfoLabel.getFont();
+        Font boldLabelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize());
+        panelSimulationInfo.setLayout(new GridLayout(5, 2));
         simulationInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
         simulationInfoCount.setHorizontalAlignment(SwingConstants.RIGHT);
         simulationInfoSnake1FoodLabel.setHorizontalAlignment(SwingConstants.LEFT);
         simulationInfoSnake1FoodCount.setHorizontalAlignment(SwingConstants.RIGHT);
         simulationInfoSnake2FoodLabel.setHorizontalAlignment(SwingConstants.LEFT);
         simulationInfoSnake2FoodCount.setHorizontalAlignment(SwingConstants.RIGHT);
+        simulationInfoTotalFoodsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        simulationInfoTotalFoodsLabel.setFont(boldLabelFont);
+        simulationInfoTotalFoodsCount.setHorizontalAlignment(SwingConstants.RIGHT);
+        simulationInfoTotalFoodsCount.setFont(boldLabelFont);
+        simulationInfoSnakesTotalMovementsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        simulationInfoSnakesTotalMovementsLabel.setFont(boldLabelFont);
+        simulationInfoSnakesTotalMovementsCount.setHorizontalAlignment(SwingConstants.RIGHT);
+        simulationInfoSnakesTotalMovementsCount.setFont(boldLabelFont);
         panelSimulationInfo.add(simulationInfoLabel);
         panelSimulationInfo.add(simulationInfoCount);
         panelSimulationInfo.add(simulationInfoSnake1FoodLabel);
         panelSimulationInfo.add(simulationInfoSnake1FoodCount);
         panelSimulationInfo.add(simulationInfoSnake2FoodLabel);
         panelSimulationInfo.add(simulationInfoSnake2FoodCount);
+        panelSimulationInfo.add(simulationInfoTotalFoodsLabel);
+        panelSimulationInfo.add(simulationInfoTotalFoodsCount);
+        panelSimulationInfo.add(simulationInfoSnakesTotalMovementsLabel);
+        panelSimulationInfo.add(simulationInfoSnakesTotalMovementsCount);
 
         panelCenter.setLayout(new BorderLayout());
         panelCenter.add(panelSimulationInfo, BorderLayout.NORTH);
@@ -99,19 +117,35 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         if (!flag || PanelParameters.getProblemType().ordinal() > ProblemType.ONE_AI.ordinal()) {
             simulationInfoSnake2FoodLabel.setVisible(flag);
             simulationInfoSnake2FoodCount.setVisible(flag);
+            simulationInfoTotalFoodsLabel.setVisible(flag);
+            simulationInfoTotalFoodsCount.setVisible(flag);
         }
+        simulationInfoSnakesTotalMovementsLabel.setVisible(flag);
+        simulationInfoSnakesTotalMovementsCount.setVisible(flag);
     }
 
     public void setSimulationInfoCount(int value) {
         this.simulationInfoCount.setText(String.valueOf(value));
     }
 
+    int snake1Foods = 0;
     public void setSimulationInfoSnake1FoodCount(int value) {
-        this.simulationInfoSnake1FoodCount.setText(String.valueOf(value));
+        this.simulationInfoSnake1FoodCount.setText(String.valueOf(snake1Foods = value));
+        updateSimulationInfoTotalFoodsCount();
     }
 
+    int snake2Foods = 0;
     public void setSimulationInfoSnake2FoodCount(int value) {
-        this.simulationInfoSnake2FoodCount.setText(String.valueOf(value));
+        this.simulationInfoSnake2FoodCount.setText(String.valueOf(snake2Foods = value));
+        updateSimulationInfoTotalFoodsCount();
+    }
+
+    public void updateSimulationInfoTotalFoodsCount() {
+        this.simulationInfoTotalFoodsCount.setText(String.valueOf(snake1Foods + snake2Foods));
+    }
+
+    public void setSimulationInfoSnakesTotalMovementsCount(int value) {
+        this.simulationInfoSnakesTotalMovementsCount.setText(String.valueOf(value));
     }
 
     public void jButtonSimulate_actionPerformed(ActionEvent e) {
@@ -129,6 +163,8 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         }
 
         setSimulationInfoVisible(false);
+        setSimulationInfoVisible(true);
+
         worker = new SwingWorker<Void, Void>() {
             @Override
             public Void doInBackground() {
@@ -136,15 +172,12 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
                 try {
                     int environmentSimulations = mainFrame.getProblem().getNumEvironmentSimulations();
                     int seed = PanelParameters.getTFSeedValue();
-                    setSimulationInfoVisible(true);
-
                     Environment.random.setSeed(seed);
+
                     for (int i = 0; i < environmentSimulations; i++) {
                         setSimulationInfoCount(i + 1);
-                        if (environment instanceof EnvironmentAI) {
-                            Environment.random.setSeed(i);
-                        }
-                        environment.initialize();
+
+                        environment.initialize(environment instanceof EnvironmentAI ? i : null);
                         environmentUpdated();
                         environment.simulate();
                     }
@@ -208,13 +241,18 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         g = environmentPanel.getGraphics();
         g.drawImage(image, GRID_TO_PANEL_GAP, GRID_TO_PANEL_GAP, null);
 
+        int[] agentsFoods = {0, 0};
+        int agentsTotalMovements = 0;
         List<SnakeAgent> agents = environment.getAgents();
-        if (agents.size() > 0) {
-            setSimulationInfoSnake1FoodCount(agents.get(0).getTailSize());
-            if (agents.size() == 2) {
-                setSimulationInfoSnake2FoodCount(agents.get(1).getTailSize());
-            }
+        for (int i = 0; i < agents.size(); i++) {
+            SnakeAgent agent = agents.get(i);
+            agentsFoods[i] += agent.getTailSize();
+            agentsTotalMovements += agent.getMovements();
         }
+
+        setSimulationInfoSnake1FoodCount(agentsFoods[0]);
+        setSimulationInfoSnake2FoodCount(agentsFoods[1]);
+        setSimulationInfoSnakesTotalMovementsCount(agentsTotalMovements);
 
         try {
             Thread.sleep(UPDATE_INTERVAL);

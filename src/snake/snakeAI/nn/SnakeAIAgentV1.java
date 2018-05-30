@@ -30,7 +30,7 @@ public class SnakeAIAgentV1 extends SnakeAIAgent {
                 n != null && n.isFree() ? (previous == null ? 1 : (previous.opposite() != Action.NORTH ? 1 : 0)) : 0,
                 s != null && s.isFree() ? (previous == null ? 1 : (previous.opposite() != Action.SOUTH ? 1 : 0)) : 0,
                 e != null && e.isFree() ? (previous == null ? 1 : (previous.opposite() != Action.EAST ? 1 : 0)) : 0,
-                w != null && w.isFree() ? (previous == null ? 1 : (previous.opposite() != Action.WEST ? 1 : 0)) : 0
+                w != null && w.isFree() ? (previous == null ? 1 : (previous.opposite() != Action.WEST ? 1 : 0)) : 0,
         };
     }
 }

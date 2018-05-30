@@ -108,8 +108,8 @@ public class EnvironmentAI extends Environment {
     public void setWeights(double[] genome) {
         for (int i = 0, start = 0; i < agents.size(); i++) {
             if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
-                ((SnakeAIAgent) agents.get(i)).setWeights(Arrays.copyOfRange(genome, start, start + genomeSizes.get(i)));
-                start = genomeSizes.get(i);
+                ((SnakeAIAgent) agents.get(i)).setWeights(Arrays.copyOfRange(genome, start, start + genomeSizes.get(i) ));
+                start = genomeSizes.get(i) - 1;
                 continue;
             }
 

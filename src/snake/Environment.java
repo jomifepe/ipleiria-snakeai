@@ -20,10 +20,10 @@ public abstract class Environment {
     protected Food food;
     protected final int maxIterations;
     protected int numIterations;
-    protected int foodEaten;
 
     public Environment(int size, int maxIterations) {
         random = new Random();
+        this.food = null;
         this.maxIterations = maxIterations;
         this.numIterations = 0;
 
@@ -37,13 +37,18 @@ public abstract class Environment {
         this.agents = new ArrayList<>();
     }
 
-    public void initialize() {
+    public void initialize(Integer seed) {
+        if (seed != null) {
+            random.setSeed(seed);
+        }
+
         resetEnvironment();
         placeAgents();
         placeFood();
     }
 
     private void resetEnvironment() {
+        this.food = null;
         this.numIterations = 0;
 
         for (int i = 0; i < grid.length; i++) {
@@ -87,7 +92,6 @@ public abstract class Environment {
     }
 
     public void simulate() {
-
         for (int i = 0; i < maxIterations; i++) {
             for (SnakeAgent agent : agents) {
                 if (!agent.isAlive()) {

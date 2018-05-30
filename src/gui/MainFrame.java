@@ -174,21 +174,16 @@ public class MainFrame extends JFrame implements GAListener {
                 File dataSet = fc.getSelectedFile();
                 problem = SnakeProblem.buildProblemFromFile(dataSet);
 
-                if (problem == null) {
-                    JOptionPane.showMessageDialog(this,
-                            "Failed to parse dataset, check your parameters", "Error!", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 if (problem.getEnvironment() instanceof EnvironmentAI &&
                         PanelParameters.getProblemType().ordinal() < ProblemType.ONE_AI.ordinal()) {
                     JOptionPane.showMessageDialog(this,
-                            "Invalid dataset for non-AI agent", "Error!", JOptionPane.ERROR_MESSAGE);
+                            "Invalid dataset for non-AI agent, change the problem type", "Error!", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (problem.getEnvironment() instanceof EnvironmentNonAI &&
                         PanelParameters.getProblemType().ordinal() > ProblemType.ADHOC.ordinal()) {
                     JOptionPane.showMessageDialog(this,
-                            "Invalid dataset for AI agent", "Error!", JOptionPane.ERROR_MESSAGE);
+                            "Invalid dataset for AI agent, change the problem type", "Error!", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -218,7 +213,8 @@ public class MainFrame extends JFrame implements GAListener {
             seriesBestIndividual.clear();
             seriesAverage.clear();
 
-            int seed = Integer.parseInt(panelParameters.textFieldSeed.getText());
+            int seed = Integer.parseInt(PanelParameters.textFieldSeed.getText());
+
             Random random = new Random(seed);
             ga = new GeneticAlgorithm<>(
                     Integer.parseInt(panelParameters.textFieldN.getText()),

@@ -5,14 +5,16 @@ import snake.snakeAI.ga.geneticOperators.*;
 import snake.snakeAI.ga.selectionMethods.RouletteWheel;
 import snake.snakeAI.ga.selectionMethods.SelectionMethod;
 import snake.snakeAI.ga.selectionMethods.Tournament;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import java.util.Random;
+import javax.swing.*;
+
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
 
@@ -38,6 +40,7 @@ public class PanelParameters extends PanelAtributesValue {
     JComboBox comboBoxRecombinationMethods = new JComboBox(recombinationMethods);
     JTextField textFieldProbRecombination = new JTextField(PROB_RECOMBINATION, TEXT_FIELD_LENGHT);
     JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
+    JButton buttonRandomizeSeed = new JButton("R");
 
     private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
     static JComboBox comboBoxSelectionProblemType = new JComboBox(ProblemType.values());
@@ -52,7 +55,18 @@ public class PanelParameters extends PanelAtributesValue {
         comboBoxSelectionProblemType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
 
         labels.add(new JLabel("Seed: "));
-        valueComponents.add(textFieldSeed);
+
+
+        JPanel panelSeed = new JPanel();
+        panelSeed.setLayout(new BorderLayout());
+        panelSeed.add(textFieldSeed, BorderLayout.CENTER);
+        panelSeed.add(buttonRandomizeSeed, BorderLayout.AFTER_LINE_ENDS);
+        textFieldSeed.setText(String.valueOf(getRandomSeedValue()));
+        valueComponents.add(panelSeed);
+
+        buttonRandomizeSeed.addActionListener(e ->
+                textFieldSeed.setText(String.valueOf(getRandomSeedValue()))
+        );
         textFieldSeed.addKeyListener(new IntegerTextField_KeyAdapter(null));
 
         labels.add(new JLabel("Population size: "));
@@ -107,6 +121,11 @@ public class PanelParameters extends PanelAtributesValue {
 
     public static ProblemType getProblemType() {
         return (ProblemType) comboBoxSelectionProblemType.getSelectedItem();
+    }
+
+    private int getRandomSeedValue() {
+        Random rnd = new Random();
+        return rnd.nextInt(Integer.MAX_VALUE) * (rnd.nextBoolean() ? 1 : -1);
     }
 
     public static void setCBSelectionProblemType(ProblemType problemType) {

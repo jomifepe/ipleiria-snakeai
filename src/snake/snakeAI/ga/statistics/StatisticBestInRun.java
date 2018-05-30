@@ -1,9 +1,7 @@
 package snake.snakeAI.ga.statistics;
 
 import gui.PanelParameters;
-import snake.Environment;
 import snake.ProblemType;
-import snake.snakeAI.SnakeExperimentsFactory;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
@@ -11,7 +9,6 @@ import snake.snakeAI.ga.GAListener;
 import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.Individual;
 import snake.snakeAI.ga.Problem;
-import snake.snakeAI.ga.experiments.Parameter;
 import snake.snakeAI.ga.utils.FileOperations;
 
 public class StatisticBestInRun<I extends Individual, P extends Problem<I>> implements GAListener {
@@ -71,9 +68,9 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
         StringBuilder txtIndividual = new StringBuilder();
         txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
-        txtIndividual.append("Food Mean: " + ((SnakeIndividual) bestInExperiment).getFoodMean() + "\r\n");
-        txtIndividual.append("Food Max: " + ((SnakeIndividual) bestInExperiment).getFoodMax() + "\r\n");
-        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getMovementsMean() + "\r\n");
+        txtIndividual.append("Food Mean: " + ((SnakeIndividual) bestInExperiment).getAvgFoods() + "\r\n");
+        txtIndividual.append("Food Max: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
+        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getAvgMovements() + "\r\n");
         txtIndividual.append("\r\n" + "//--------------------------------" + "\r\n");
 
         FileOperations.appendToTextFile(txtFullPath,
