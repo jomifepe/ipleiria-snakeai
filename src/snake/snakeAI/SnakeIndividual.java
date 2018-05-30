@@ -121,10 +121,11 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format( "%.1f", fitness) + "\t");
-        sb.append(String.format( "%.1f", avgFoods) + "\t");
-        sb.append(bestFoods + "\t");
-        sb.append(String.format( "%.1f", avgMovements));
+        sb.append(String.format( "%.1f", fitness)).append("\t");
+        sb.append(String.format( "%.1f", avgFoods)).append("\t");
+        sb.append(bestFoods).append("\t");
+        sb.append(String.format( "%.1f", avgMovements)).append("\t");;
+        sb.append(bestMovements);
 
         return sb.toString();
     }
@@ -182,5 +183,17 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
     public int getBestFoods() {
         return bestFoods;
+    }
+
+    public int getBestMovements() {
+        return bestMovements;
+    }
+
+    public int getNumBestSimulation() {
+        return numBestSimulation;
+    }
+
+    public int getNumSimulations() {
+        return numSimulations;
     }
 }

@@ -51,9 +51,10 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         xlsHeaders.append("Mutation type\t");
         xlsHeaders.append("Mutation prob.\t");
         xlsHeaders.append("Fitness\t");
-        xlsHeaders.append("Food Mean\t");
-        xlsHeaders.append("Food Max\t");
-        xlsHeaders.append("Movements\r\n");
+        xlsHeaders.append("Average Foods\t");
+        xlsHeaders.append("Best Run Foods\t");
+        xlsHeaders.append("Average Movements\t");
+        xlsHeaders.append("Best Run Movements\r\n");
 
         if (!FileOperations.fileExists(xlsFullPath)) {
             FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
@@ -68,9 +69,10 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
         StringBuilder txtIndividual = new StringBuilder();
         txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
-        txtIndividual.append("Food Mean: " + ((SnakeIndividual) bestInExperiment).getAvgFoods() + "\r\n");
-        txtIndividual.append("Food Max: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
-        txtIndividual.append("Movements: " + ((SnakeIndividual) bestInExperiment).getAvgMovements() + "\r\n");
+        txtIndividual.append("Average Foods: " + ((SnakeIndividual) bestInExperiment).getAvgFoods() + "\r\n");
+        txtIndividual.append("Best Run Foods: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
+        txtIndividual.append("Average Movements: " + ((SnakeIndividual) bestInExperiment).getAvgMovements() + "\r\n");
+        txtIndividual.append("Best Run Movements: " + ((SnakeIndividual) bestInExperiment).getBestMovements() + "\r\n");
         txtIndividual.append("\r\n" + "//--------------------------------" + "\r\n");
 
         FileOperations.appendToTextFile(txtFullPath,

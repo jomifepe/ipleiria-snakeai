@@ -145,20 +145,20 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
 
     private String getExperimentValuesString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(problemType.name().toLowerCase() + "\t");
-        sb.append(populationSize + "\t");
-        sb.append(maxGenerations + "\t");
-        sb.append(selection + "\t");
+        sb.append(problemType.name().toLowerCase()).append("\t");
+        sb.append(populationSize).append("\t");
+        sb.append(maxGenerations).append("\t");
+        sb.append(selection).append("\t");
 
         if (selection instanceof Tournament) {
-            sb.append(tournamentSize + "\t");
+            sb.append(tournamentSize).append("\t");
         } else {
-            sb.append("-" + "\t");
+            sb.append("-\t");
         }
 
-        sb.append(recombination + "\t");
-        sb.append(String.format( "%.1f", recombinationProbability) + "\t");
-        sb.append(mutation + "\t");
+        sb.append(recombination).append("\t");
+        sb.append(String.format( "%.1f", recombinationProbability)).append("\t");
+        sb.append(mutation).append("\t");
         sb.append(mutationProbability);
 
         return sb.toString();
