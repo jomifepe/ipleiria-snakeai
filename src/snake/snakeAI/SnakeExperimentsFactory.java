@@ -75,8 +75,6 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
                 break;
         }
 
-        // TODO YOU MAY ADD NEW PARAMETERS (eg., NEW GENETIC OPERATORS, ...).
-
         //MUTATION
         mutationProbability = Double.parseDouble(getParameterValue("Mutation probability"));
         delta = Double.parseDouble(getParameterValue("Delta"));

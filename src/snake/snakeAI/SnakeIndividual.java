@@ -18,7 +18,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
     private int numBestSimulation;
     private int numSimulations;
 
-    public SnakeIndividual(SnakeProblem problem, int size /*TODO?*/) {
+    public SnakeIndividual(SnakeProblem problem, int size) {
         super(problem, size);
     }
 

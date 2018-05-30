@@ -213,9 +213,11 @@ public class MainFrame extends JFrame implements GAListener {
             seriesBestIndividual.clear();
             seriesAverage.clear();
 
-            int seed = Integer.parseInt(PanelParameters.textFieldSeed.getText());
+            Random random = new Random();
+            if (PanelParameters.isCustomSeedCheckBoxChecked()) {
+                random.setSeed(PanelParameters.getSeedValue());
+            }
 
-            Random random = new Random(seed);
             ga = new GeneticAlgorithm<>(
                     Integer.parseInt(panelParameters.textFieldN.getText()),
                     Integer.parseInt(panelParameters.textFieldGenerations.getText()),

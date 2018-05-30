@@ -22,30 +22,34 @@ public class PanelParameters extends PanelAtributesValue {
 
     public static final int TEXT_FIELD_LENGHT = 7;
 
-    // TODO MODIFY TO CHANGE THE DEFAULT PARAMETER VALUES
     public static final String SEED = "1";
     public static final String POPULATION_SIZE = "100";
     public static final String GENERATIONS = "1000";
-    public static final String TOURNAMENT_SIZE = "4";
+    public static final String TOURNAMENT_SIZE = "10";
     public static final String PROB_RECOMBINATION = "0.7";
-    public static final String PROB_MUTATION = "0.015";
+    public static final String PROB_MUTATION = "0.2";
 
     static JTextField textFieldSeed = new JTextField(SEED, TEXT_FIELD_LENGHT);
     JTextField textFieldN = new JTextField(POPULATION_SIZE, TEXT_FIELD_LENGHT);
     JTextField textFieldGenerations = new JTextField(GENERATIONS, TEXT_FIELD_LENGHT);
+    JButton buttonRandomizeSeed = new JButton("R");
+    static JCheckBox checkBoxUseSeed = new JCheckBox("Use provided seed");
+
     String[] selectionMethods = {"Tournament", "Roulette"};
     JComboBox comboBoxSelectionMethods = new JComboBox(selectionMethods);
     JTextField textFieldTournamentSize = new JTextField(TOURNAMENT_SIZE, TEXT_FIELD_LENGHT);
+
     String[] recombinationMethods = {"One cut", "Two cuts", "Uniform"};
     JComboBox comboBoxRecombinationMethods = new JComboBox(recombinationMethods);
     JTextField textFieldProbRecombination = new JTextField(PROB_RECOMBINATION, TEXT_FIELD_LENGHT);
-    JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
-    JButton buttonRandomizeSeed = new JButton("R");
 
-    private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
+    String[] mutationMethods = {"Gaussian", "Add Or Subtract"};
+    JComboBox comboBoxMutationMethods = new JComboBox(mutationMethods);
+    JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
+
     static JComboBox comboBoxSelectionProblemType = new JComboBox(ProblemType.values());
 
-    //TODO - MORE PARAMETERS?
+    private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
 
     public PanelParameters() {
         title = "Genetic algorithm parameters";
@@ -55,19 +59,18 @@ public class PanelParameters extends PanelAtributesValue {
         comboBoxSelectionProblemType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
 
         labels.add(new JLabel("Seed: "));
-
-
+        buttonRandomizeSeed.setToolTipText("Randomize");
+        buttonRandomizeSeed.addActionListener(e -> textFieldSeed.setText(String.valueOf(getRandomSeedValue())));
+        textFieldSeed.setText(String.valueOf(getRandomSeedValue()));
         JPanel panelSeed = new JPanel();
         panelSeed.setLayout(new BorderLayout());
         panelSeed.add(textFieldSeed, BorderLayout.CENTER);
         panelSeed.add(buttonRandomizeSeed, BorderLayout.AFTER_LINE_ENDS);
-        textFieldSeed.setText(String.valueOf(getRandomSeedValue()));
         valueComponents.add(panelSeed);
-
-        buttonRandomizeSeed.addActionListener(e ->
-                textFieldSeed.setText(String.valueOf(getRandomSeedValue()))
-        );
         textFieldSeed.addKeyListener(new IntegerTextField_KeyAdapter(null));
+
+        labels.add(new JLabel(""));
+        valueComponents.add(checkBoxUseSeed);
 
         labels.add(new JLabel("Population size: "));
         valueComponents.add(textFieldN);
@@ -91,10 +94,13 @@ public class PanelParameters extends PanelAtributesValue {
         labels.add(new JLabel("Recombination prob.: "));
         valueComponents.add(textFieldProbRecombination);
 
+        labels.add(new JLabel("Mutation method: "));
+        valueComponents.add(comboBoxMutationMethods);
+        comboBoxMutationMethods.addActionListener(new JComboBoxMutationMethods_ActionAdapter(this));
+
         labels.add(new JLabel("Mutation prob.: "));
         valueComponents.add(textFieldProbMutation);
 
-        //TODO - MORE PARAMETERS?
         configure();
     }
 
@@ -147,7 +153,6 @@ public class PanelParameters extends PanelAtributesValue {
     }
 
     public Recombination<SnakeIndividual> getRecombinationMethod() {
-
         double recombinationProb = Double.parseDouble(textFieldProbRecombination.getText());
 
         switch (comboBoxRecombinationMethods.getSelectedIndex()) {
@@ -163,10 +168,21 @@ public class PanelParameters extends PanelAtributesValue {
 
     public Mutation<SnakeIndividual> getMutationMethod() {
         double mutationProbability = Double.parseDouble(textFieldProbMutation.getText());
-        return new MutationGaussian<>(mutationProbability);
+
+        switch (comboBoxRecombinationMethods.getSelectedIndex()) {
+            case 0:
+                return new MutationGaussian<>(mutationProbability);
+            case 1:
+                return new MutationAddOrSubtract<>(mutationProbability);
+        }
+        return null;
     }
 
-    public static int getTFSeedValue() {
+    public static boolean isCustomSeedCheckBoxChecked() {
+        return checkBoxUseSeed.isSelected();
+    }
+
+    public static int getSeedValue() {
         String seed = textFieldSeed.getText().trim();
         return Integer.parseInt(seed);
     }
@@ -184,6 +200,18 @@ class JComboBoxSelectionMethods_ActionAdapter implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         adaptee.actionPerformedSelectionMethods(e);
     }
+}
+
+class JComboBoxMutationMethods_ActionAdapter implements ActionListener {
+
+    final private PanelParameters adaptee;
+
+    JComboBoxMutationMethods_ActionAdapter(PanelParameters adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) { }
 }
 
 class JComboBoxSelectionSnakeType_ActionAdapter implements ActionListener {

@@ -13,6 +13,9 @@ import snake.snakeAI.ga.experiments.Parameter;
 import snake.snakeAI.ga.utils.FileOperations;
 import snake.snakeAI.ga.utils.Maths;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StatisticBestAverage<E extends Individual, P extends Problem<E>> implements GAListener  {
     
     private final double[] values;
@@ -34,15 +37,16 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
 
     @Override
     public void experimentEnded(ExperimentEvent e) {
-        ProblemType problemType = PanelParameters.getProblemType();
-        String strProblemType = problemType.name().toLowerCase();
+//        ProblemType problemType = PanelParameters.getProblemType();
+//        String strProblemType = problemType.name().toLowerCase();
 
         String filePath = "statistics/";
-        String fileName = strProblemType + "_average_fitness";
+        String fileName = "average_fitness";
 
         String xlsFullPath = filePath + fileName + ".xls";
 
         StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Time\t");
         xlsHeaders.append("Problem type\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
@@ -58,12 +62,15 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
         double averageFitness = Maths.average(values);
         double sd = Maths.standardDeviation(values, averageFitness);
 
+        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date date = new Date();
+
         if (!FileOperations.fileExists(xlsFullPath)) {
             FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
         }
         
         FileOperations.appendToTextFile(xlsFullPath,
-                e.getSource() + "\t" +
+                time.format(date) + "\t" + e.getSource() + "\t" +
                         String.format("%.1f", averageFitness) + "\t" + String.format("%.4f", sd) + "\r\n"
         );
     }    

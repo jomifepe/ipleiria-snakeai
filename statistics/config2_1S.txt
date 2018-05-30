@@ -4,7 +4,7 @@ Max generations: 1
 
 //--------------------------------
 
-Problem type: one_ai
+Problem type: one_ai, two_identical_ai
 
 //--------------------------------
 
@@ -19,7 +19,7 @@ Recombination probability: 0.7
 //--------------------------------
 
 Mutation: gaussian
-Mutation probability: 0.015
+Mutation probability: 0.015, 0.2, 0.9
 Delta: 0.3
 
 //--------------------------------

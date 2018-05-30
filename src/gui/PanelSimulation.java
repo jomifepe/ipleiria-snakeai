@@ -171,13 +171,15 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
                 ConsoleUtils.println(ConsoleColor.BRIGHT_GREEN, "<simulate worker started>");
                 try {
                     int environmentSimulations = mainFrame.getProblem().getNumEvironmentSimulations();
-                    int seed = PanelParameters.getTFSeedValue();
-                    Environment.random.setSeed(seed);
+
+                    boolean usingCustomSeed = PanelParameters.isCustomSeedCheckBoxChecked();
+                    if (usingCustomSeed) {
+                        Environment.random.setSeed(PanelParameters.getSeedValue());
+                    }
 
                     for (int i = 0; i < environmentSimulations; i++) {
                         setSimulationInfoCount(i + 1);
-
-                        environment.initialize(environment instanceof EnvironmentAI ? i : null);
+                        environment.initialize(usingCustomSeed && environment instanceof EnvironmentNonAI ? null : i);
                         environmentUpdated();
                         environment.simulate();
                     }

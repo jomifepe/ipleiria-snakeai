@@ -11,6 +11,9 @@ import snake.snakeAI.ga.Individual;
 import snake.snakeAI.ga.Problem;
 import snake.snakeAI.ga.utils.FileOperations;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StatisticBestInRun<I extends Individual, P extends Problem<I>> implements GAListener {
     private I bestInExperiment;
 
@@ -35,12 +38,14 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         String strProblemType = problemType.name().toLowerCase();
 
         String filePath = "statistics/";
-        String fileName = strProblemType + "_best_per_experiment";
+        String fileName = "best_per_experiment";
 
         /* XLS file */
         String xlsFullPath = filePath + fileName + ".xls";
 
+
         StringBuilder xlsHeaders = new StringBuilder();
+        xlsHeaders.append("Time\t");
         xlsHeaders.append("Problem type\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
@@ -52,16 +57,19 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         xlsHeaders.append("Mutation prob.\t");
         xlsHeaders.append("Fitness\t");
         xlsHeaders.append("Average Foods\t");
-        xlsHeaders.append("Best Run Foods\t");
+        xlsHeaders.append("Best Foods\t");
         xlsHeaders.append("Average Movements\t");
-        xlsHeaders.append("Best Run Movements\r\n");
+        xlsHeaders.append("Best Movements\r\n");
+
+        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date date = new Date();
 
         if (!FileOperations.fileExists(xlsFullPath)) {
             FileOperations.appendToTextFile(xlsFullPath, xlsHeaders.toString());
         }
 
         FileOperations.appendToTextFile(xlsFullPath,
-                e.getSource() + "\t" + bestInExperiment.toString() + "\r\n"
+                time.format(date) + "\t" + e.getSource() + "\t" + bestInExperiment.toString() + "\r\n"
         );
 
         /* TXT file */
@@ -70,13 +78,14 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         StringBuilder txtIndividual = new StringBuilder();
         txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
         txtIndividual.append("Average Foods: " + ((SnakeIndividual) bestInExperiment).getAvgFoods() + "\r\n");
-        txtIndividual.append("Best Run Foods: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
+        txtIndividual.append("Best Foods: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
         txtIndividual.append("Average Movements: " + ((SnakeIndividual) bestInExperiment).getAvgMovements() + "\r\n");
-        txtIndividual.append("Best Run Movements: " + ((SnakeIndividual) bestInExperiment).getBestMovements() + "\r\n");
+        txtIndividual.append("Best Movements: " + ((SnakeIndividual) bestInExperiment).getBestMovements() + "\r\n");
         txtIndividual.append("\r\n" + "//--------------------------------" + "\r\n");
 
         FileOperations.appendToTextFile(txtFullPath,
-                "Problem type: " + strProblemType + "\r\n" +
+                "Time: " + time.format(date) + "\r\n" +
+                        "Problem type: " + strProblemType + "\r\n" +
                         e.getSource().getFactory().prettyPrint() + "\r\n" + txtIndividual.toString() + "\r\n"
         );
     }
