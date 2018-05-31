@@ -8,6 +8,7 @@ import snake.snakeAI.ga.Problem;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -63,7 +64,12 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
     // MODIFY IF YOU DEFINE OTHER PARAMETERS
     public static SnakeProblem buildProblemFromFile(File file) throws IOException {
-        java.util.Scanner f = new java.util.Scanner(file);
+        java.util.Scanner f;
+        try {
+            f = new java.util.Scanner(file);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
 
         List<String> lines = new LinkedList<>();
 

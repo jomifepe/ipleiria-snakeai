@@ -36,6 +36,9 @@ public abstract class ExperimentsFactory {
     public Experiment nextExperiment() throws IOException {
         if (hasMoreExperiments()) {
             Experiment experiment = buildExperiment();
+            if (experiment == null) {
+                return null;
+            }
             indicesManaging(orderedParametersVector.length - 1);
             return experiment;
         }

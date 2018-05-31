@@ -43,7 +43,7 @@ public class PanelParameters extends PanelAtributesValue {
     JComboBox comboBoxRecombinationMethods = new JComboBox(recombinationMethods);
     JTextField textFieldProbRecombination = new JTextField(PROB_RECOMBINATION, TEXT_FIELD_LENGHT);
 
-    String[] mutationMethods = {"Gaussian", "Add Or Subtract"};
+    String[] mutationMethods = {"Gaussian", "Add Or Subtract", "Random Gene Swap"};
     JComboBox comboBoxMutationMethods = new JComboBox(mutationMethods);
     JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
 
@@ -169,11 +169,13 @@ public class PanelParameters extends PanelAtributesValue {
     public Mutation<SnakeIndividual> getMutationMethod() {
         double mutationProbability = Double.parseDouble(textFieldProbMutation.getText());
 
-        switch (comboBoxRecombinationMethods.getSelectedIndex()) {
+        switch (comboBoxMutationMethods.getSelectedIndex()) {
             case 0:
                 return new MutationGaussian<>(mutationProbability);
             case 1:
                 return new MutationAddOrSubtract<>(mutationProbability);
+            case 2:
+                return new MutationRandomGeneSwap<>(mutationProbability);
         }
         return null;
     }

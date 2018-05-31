@@ -89,6 +89,9 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
 
         //PROBLEM 
         problem = SnakeProblem.buildProblemFromFile(new File(getParameterValue("Problem file")));
+        if (problem == null) {
+            return null;
+        }
 
         String experimentValuesString = getExperimentValuesString();
 

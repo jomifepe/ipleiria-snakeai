@@ -1,6 +1,5 @@
 package gui;
 
-import javafx.scene.layout.Pane;
 import snake.EnvironmentAI;
 import snake.EnvironmentNonAI;
 import snake.ProblemType;
@@ -315,12 +314,19 @@ public class MainFrame extends JFrame implements GAListener {
         textFieldExperimentsStatus.setText("Running");
 
         worker = new SwingWorker<Void, Void>() {
+            boolean error = false;
+
             @Override
             public Void doInBackground() {
+
                 try {
                     while (experimentsFactory.hasMoreExperiments()) {
                         try {
                             Experiment experiment = experimentsFactory.nextExperiment();
+                            if (experiment == null) {
+                                error = true;
+                                return null;
+                            }
 
                             ProblemType problemType = ((SnakeExperimentsFactory) experiment.getFactory()).getProblemType();
                             PanelParameters.setCBSelectionProblemType(problemType);
@@ -340,7 +346,7 @@ public class MainFrame extends JFrame implements GAListener {
             @Override
             public void done() {
                 manageButtons(true, problem != null, false, true, false, false);
-                textFieldExperimentsStatus.setText("Finished");
+                textFieldExperimentsStatus.setText(error ? "Failed, check file" : "Finished");
             }
         };
         worker.execute();
