@@ -173,6 +173,11 @@ public class MainFrame extends JFrame implements GAListener {
                 File dataSet = fc.getSelectedFile();
                 problem = SnakeProblem.buildProblemFromFile(dataSet);
 
+                if (problem == null) {
+                    JOptionPane.showMessageDialog(this,
+                            "Invalid dataset, check you parameters", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (problem.getEnvironment() instanceof EnvironmentAI &&
                         PanelParameters.getProblemType().ordinal() < ProblemType.ONE_AI.ordinal()) {
                     JOptionPane.showMessageDialog(this,

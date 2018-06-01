@@ -3,10 +3,9 @@ package snake.snakeAI;
 import snake.Environment;
 import snake.EnvironmentAI;
 import snake.EnvironmentNonAI;
-import snake.ProblemType;
 import snake.snakeAI.ga.Problem;
+import snake.snakeAI.nn.utils.ActivationFunction;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,21 +18,22 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
     final private int maxIterations;
     final private int numEnvironmentRuns;
     final private Environment environment;
-    final private List<Integer> numInputs;
-    final private List<Integer> numHiddenUnits;
-    final private List<Integer> numOutputs;
+    private List<Integer> numInputs = null;
+    private List<Integer> numHiddenUnits = null;
+    private List<Integer> numOutputs = null;
+    private List<ActivationFunction> activationFunction = null;
 
     public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns) {
         this.environmentSize = environmentSize;
         this.maxIterations = maxIterations;
         this.numEnvironmentRuns = numEnvironmentRuns;
-        this.numInputs = this.numHiddenUnits = this.numOutputs = null;
 
         this.environment = new EnvironmentNonAI(environmentSize, maxIterations);
     }
 
     public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns,
-                        List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs) {
+                        List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs,
+                        List<ActivationFunction> activationFunction) {
 
         this.environmentSize = environmentSize;
         this.maxIterations = maxIterations;
@@ -41,9 +41,10 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         this.numInputs = numInputs;
         this.numHiddenUnits = numHiddenUnits;
         this.numOutputs = numOutputs;
+        this.activationFunction = activationFunction;
 
         environment = new EnvironmentAI(environmentSize, maxIterations);
-        ((EnvironmentAI) environment).setNNDimensions(numInputs, numHiddenUnits, numOutputs);
+        ((EnvironmentAI) environment).setNNParameters(numInputs, numHiddenUnits, numOutputs, activationFunction);
     }
 
     @Override
@@ -64,6 +65,9 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
     // MODIFY IF YOU DEFINE OTHER PARAMETERS
     public static SnakeProblem buildProblemFromFile(File file) throws IOException {
+        int NUM_ONE_AI_OBLIGATORY_PARAMS = 4;
+        int NUM_TWO_AI_OBLIGATORY_PARAMS = 7;
+
         java.util.Scanner f;
         try {
             f = new java.util.Scanner(file);
@@ -88,25 +92,41 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
             }
         }
 
-        int environmentSize = Integer.parseInt(parametersValues.get(0));
-        int maxIterations = Integer.parseInt(parametersValues.get(1));
-        int numEnvironmentRuns = Integer.parseInt(parametersValues.get(2));
+        int environmentSize, maxIterations, numEnvironmentRuns;
 
-        if (parametersValues.size() > 3) {
+
+        try {
+            environmentSize = Integer.parseInt(parametersValues.get(0));
+            maxIterations = Integer.parseInt(parametersValues.get(1));
+            numEnvironmentRuns = Integer.parseInt(parametersValues.get(2));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        if (parametersValues.size() > NUM_ONE_AI_OBLIGATORY_PARAMS) {
             List<Integer> numInputs = new ArrayList<>();
             List<Integer> numHiddenUnits = new ArrayList<>();
             List<Integer> numOutputs = new ArrayList<>();
+            List<ActivationFunction> activationFunctions = new ArrayList<>();
 
-            numInputs.add(Integer.parseInt(parametersValues.get(3)));
-            if (parametersValues.size() > 6) {
-                numInputs.add(Integer.parseInt(parametersValues.get(4)));
-                numHiddenUnits.add(Integer.parseInt(parametersValues.get(5)));
-                numHiddenUnits.add(Integer.parseInt(parametersValues.get(6)));
-                numOutputs.add(Integer.parseInt(parametersValues.get(7)));
-                numOutputs.add(Integer.parseInt(parametersValues.get(8)));
-            } else {
-                numHiddenUnits.add(Integer.parseInt(parametersValues.get(4)));
-                numOutputs.add(Integer.parseInt(parametersValues.get(5)));
+            try {
+                numInputs.add(Integer.parseInt(parametersValues.get(3)));
+
+                if (parametersValues.size() > NUM_TWO_AI_OBLIGATORY_PARAMS) {
+                    numInputs.add(Integer.parseInt(parametersValues.get(4)));
+                    numHiddenUnits.add(Integer.parseInt(parametersValues.get(5)));
+                    numHiddenUnits.add(Integer.parseInt(parametersValues.get(6)));
+                    numOutputs.add(Integer.parseInt(parametersValues.get(7)));
+                    numOutputs.add(Integer.parseInt(parametersValues.get(8)));
+                    activationFunctions.add(ActivationFunction.valueOf(parametersValues.get(9).toUpperCase()));
+                    activationFunctions.add(ActivationFunction.valueOf(parametersValues.get(10).toUpperCase()));
+                } else {
+                    numHiddenUnits.add(Integer.parseInt(parametersValues.get(4)));
+                    numOutputs.add(Integer.parseInt(parametersValues.get(5)));
+                    activationFunctions.add(ActivationFunction.valueOf(parametersValues.get(6).toUpperCase()));
+                }
+            } catch (IllegalArgumentException e) {
+                return null;
             }
 
             return new SnakeProblem(
@@ -115,7 +135,8 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
                     numEnvironmentRuns,
                     numInputs,
                     numHiddenUnits,
-                    numOutputs);
+                    numOutputs,
+                    activationFunctions);
         }
 
         return new SnakeProblem(

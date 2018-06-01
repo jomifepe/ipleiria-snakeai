@@ -5,22 +5,21 @@ import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.nn.SnakeAIAgent;
 import snake.snakeAI.nn.SnakeAIAgentV1;
 import snake.snakeAI.nn.SnakeAIAgentV2;
-import snake.snakeAdhoc.SnakeAdhocAgent;
-import snake.snakeRandom.SnakeRandomAgent;
+import snake.snakeAI.nn.utils.ActivationFunction;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class EnvironmentAI extends Environment {
 
     private SnakeIndividual bestInRun = null;
 
     private List<Integer> numNNInputs;
-    private List<Integer> numNNHiddenUnits;
+    private List<Integer> numNNHidden;
     private List<Integer> numNNOutputs;
+    private List<ActivationFunction> activationFunctions;
 
     private List<Integer> genomeSizes;
 
@@ -28,7 +27,7 @@ public class EnvironmentAI extends Environment {
         super(size, maxIterations);
 
         this.numNNInputs = new ArrayList<>();
-        this.numNNHiddenUnits = new ArrayList<>();
+        this.numNNHidden = new ArrayList<>();
         this.numNNOutputs = new ArrayList<>();
         this.genomeSizes = new ArrayList<>();
     }
@@ -42,7 +41,8 @@ public class EnvironmentAI extends Environment {
 
         switch (PanelParameters.getProblemType()) {
             case ONE_AI:
-                SnakeAIAgent agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                SnakeAIAgent agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN);
                 agents.add(agent);
 
                 if (hasBestInRun()) {
@@ -50,11 +50,13 @@ public class EnvironmentAI extends Environment {
                 }
                 break;
             case TWO_IDENTICAL_AI:
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN);
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.ORANGE);
                 agents.add(agent);
 
                 if (hasBestInRun()) {
@@ -62,16 +64,14 @@ public class EnvironmentAI extends Environment {
                 }
                 break;
             case TWO_DIFFERENT_AI:
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.GREEN);
+                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN);
                 agents.add(agent);
 
                 agentCell = getAgentFreeCell();
-                SnakeAIAgentV2 agentV2;
-                if (numNNInputs.size() == 1) {
-                    agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(0), numNNHiddenUnits.get(0), numNNOutputs.get(0), Color.ORANGE);
-                } else {
-                    agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(1), numNNHiddenUnits.get(1), numNNOutputs.get(1), Color.ORANGE);
-                }
+                int index = numNNInputs.size() - 1;
+                SnakeAIAgentV2 agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(index), numNNHidden.get(index), numNNOutputs.get(index),
+                        activationFunctions.get(index), Color.ORANGE);
                 agents.add(agentV2);
 
                 if (hasBestInRun()) {
@@ -86,17 +86,19 @@ public class EnvironmentAI extends Environment {
     }
 
     private boolean nnDimensionsSet() {
-        return numNNInputs.size() > 0 && numNNHiddenUnits.size() > 0 && numNNOutputs.size() > 0;
+        return numNNInputs.size() > 0 && numNNHidden.size() > 0 && numNNOutputs.size() > 0;
     }
 
     public void setBestInRun(SnakeIndividual bestInRun) {
         this.bestInRun = bestInRun;
     }
 
-    public void setNNDimensions(List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs) {
+    public void setNNParameters(List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs,
+                                List<ActivationFunction> activationFunctions) {
         this.numNNInputs = numInputs;
-        this.numNNHiddenUnits = numHiddenUnits;
+        this.numNNHidden = numHiddenUnits;
         this.numNNOutputs = numOutputs;
+        this.activationFunctions = activationFunctions;
 
         for (int i = 0; i < numInputs.size(); i++) {
             genomeSizes.add((numInputs.get(i) + 1) * numHiddenUnits.get(i) +
@@ -125,11 +127,15 @@ public class EnvironmentAI extends Environment {
         return numNNInputs;
     }
 
-    public List<Integer> getNumNNHiddenUnits() {
-        return numNNHiddenUnits;
+    public List<Integer> getNumNNHidden() {
+        return numNNHidden;
     }
 
     public List<Integer> getNumNNOutputs() {
         return numNNOutputs;
+    }
+
+    public List<ActivationFunction> getActivationFunctions() {
+        return activationFunctions;
     }
 }

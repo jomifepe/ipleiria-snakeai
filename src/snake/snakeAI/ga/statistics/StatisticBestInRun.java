@@ -1,7 +1,10 @@
 package snake.snakeAI.ga.statistics;
 
 import gui.PanelParameters;
+import snake.EnvironmentAI;
+import snake.EnvironmentNonAI;
 import snake.ProblemType;
+import snake.snakeAI.SnakeExperimentsFactory;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.ga.experiments.ExperimentEvent;
 import snake.snakeAI.ga.GAEvent;
@@ -10,9 +13,11 @@ import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.Individual;
 import snake.snakeAI.ga.Problem;
 import snake.snakeAI.ga.utils.FileOperations;
+import snake.snakeAI.nn.utils.ActivationFunction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class StatisticBestInRun<I extends Individual, P extends Problem<I>> implements GAListener {
     private I bestInExperiment;
@@ -43,15 +48,18 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         /* XLS file */
         String xlsFullPath = filePath + fileName + ".xls";
 
-
         StringBuilder xlsHeaders = new StringBuilder();
         xlsHeaders.append("Time\t");
         xlsHeaders.append("Problem type\t");
+        xlsHeaders.append("NN-I\t");
+        xlsHeaders.append("NN-H\t");
+        xlsHeaders.append("NN-O\t");
+        xlsHeaders.append("NN-Activation\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
-        xlsHeaders.append("Selection type\t");
-        xlsHeaders.append("Tournament size\t");
-        xlsHeaders.append("Recombination type\t");
+        xlsHeaders.append("Selection method\t");
+        xlsHeaders.append("Selection size\t");
+        xlsHeaders.append("Recombination method\t");
         xlsHeaders.append("Recombination prob.\t");
         xlsHeaders.append("Mutation type\t");
         xlsHeaders.append("Mutation prob.\t");
@@ -61,7 +69,7 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         xlsHeaders.append("Average Movements\t");
         xlsHeaders.append("Best Movements\r\n");
 
-        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
         Date date = new Date();
 
         if (!FileOperations.fileExists(xlsFullPath)) {
@@ -85,7 +93,6 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
 
         FileOperations.appendToTextFile(txtFullPath,
                 "Time: " + time.format(date) + "\r\n" +
-                        "Problem type: " + strProblemType + "\r\n" +
                         e.getSource().getFactory().prettyPrint() + "\r\n" + txtIndividual.toString() + "\r\n"
         );
     }

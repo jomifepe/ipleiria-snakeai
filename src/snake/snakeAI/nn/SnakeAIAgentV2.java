@@ -3,15 +3,15 @@ package snake.snakeAI.nn;
 import snake.Action;
 import snake.Cell;
 import snake.Perception;
-import snake.SnakeAgent;
 import snake.snakeAI.nn.utils.ActivationFunction;
 
 import java.awt.*;
 
 public class SnakeAIAgentV2 extends SnakeAIAgent {
 
-    public SnakeAIAgentV2(Cell cell, int inputLayerSize, int hiddenLayerSize, int outputLayerSize, Color color) {
-        super(cell, inputLayerSize, hiddenLayerSize, outputLayerSize, color);
+    public SnakeAIAgentV2(Cell cell, int inputLayerSize, int hiddenLayerSize, int outputLayerSize,
+                          ActivationFunction activationFunction, Color color) {
+        super(cell, inputLayerSize, hiddenLayerSize, outputLayerSize, activationFunction, color);
     }
 
     @Override

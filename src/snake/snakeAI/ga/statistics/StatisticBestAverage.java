@@ -40,6 +40,7 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
 //        ProblemType problemType = PanelParameters.getProblemType();
 //        String strProblemType = problemType.name().toLowerCase();
 
+
         String filePath = "statistics/";
         String fileName = "average_fitness";
 
@@ -48,11 +49,15 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
         StringBuilder xlsHeaders = new StringBuilder();
         xlsHeaders.append("Time\t");
         xlsHeaders.append("Problem type\t");
+        xlsHeaders.append("NN-I\t");
+        xlsHeaders.append("NN-H\t");
+        xlsHeaders.append("NN-O\t");
+        xlsHeaders.append("NN-Activation\t");
         xlsHeaders.append("Population size\t");
         xlsHeaders.append("Generations\t");
-        xlsHeaders.append("Selection type\t");
-        xlsHeaders.append("Tournament size\t");
-        xlsHeaders.append("Recombination type\t");
+        xlsHeaders.append("Selection method\t");
+        xlsHeaders.append("Selection size\t");
+        xlsHeaders.append("Recombination method\t");
         xlsHeaders.append("Recombination prob.\t");
         xlsHeaders.append("Mutation type\t");
         xlsHeaders.append("Mutation prob.\t");
@@ -62,7 +67,7 @@ public class StatisticBestAverage<E extends Individual, P extends Problem<E>> im
         double averageFitness = Maths.average(values);
         double sd = Maths.standardDeviation(values, averageFitness);
 
-        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat time = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
         Date date = new Date();
 
         if (!FileOperations.fileExists(xlsFullPath)) {

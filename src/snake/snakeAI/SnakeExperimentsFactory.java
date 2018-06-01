@@ -1,5 +1,7 @@
 package snake.snakeAI;
 
+import snake.EnvironmentAI;
+import snake.EnvironmentNonAI;
 import snake.ProblemType;
 import snake.snakeAI.ga.experiments.*;
 import snake.snakeAI.ga.GAListener;
@@ -9,7 +11,10 @@ import snake.snakeAI.ga.selectionMethods.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Collectors;
+
 import snake.snakeAI.ga.statistics.StatisticBestAverage;
 import snake.snakeAI.ga.statistics.StatisticBestInRun;
 
@@ -145,8 +150,22 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
     }
 
     private String getExperimentValuesString() {
+        EnvironmentAI environment = (EnvironmentAI) problem.getEnvironment();
+        String nnInputs = environment.getNumNNInputs().stream()
+                .map(Object::toString).collect(Collectors.joining(", "));
+        String nnHidden = environment.getNumNNHidden().stream()
+                .map(Object::toString).collect(Collectors.joining(", "));
+        String nnOutputs = environment.getNumNNOutputs().stream()
+                .map(Object::toString).collect(Collectors.joining(", "));
+        String nnActivation = environment.getActivationFunctions()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+
         StringBuilder sb = new StringBuilder();
         sb.append(problemType.name().toLowerCase()).append("\t");
+        sb.append(nnInputs).append("\t");
+        sb.append(nnHidden).append("\t");
+        sb.append(nnOutputs).append("\t");
+        sb.append(nnActivation).append("\t");
         sb.append(populationSize).append("\t");
         sb.append(maxGenerations).append("\t");
         sb.append(selection).append("\t");
@@ -167,18 +186,33 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
 
     @Override
     public String prettyPrint() {
+        EnvironmentAI environment = (EnvironmentAI) problem.getEnvironment();
+        String nnInputs = environment.getNumNNInputs().stream().
+                map(Object::toString).collect(Collectors.joining(", "));
+        String nnHidden = environment.getNumNNHidden().stream()
+                .map(Object::toString).collect(Collectors.joining(", "));
+        String nnOutputs = environment.getNumNNOutputs().stream()
+                .map(Object::toString).collect(Collectors.joining(", "));
+        String nnActivation = environment.getActivationFunctions()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+
         StringBuilder sb = new StringBuilder();
-        sb.append("Population size: " + populationSize + System.lineSeparator());
-        sb.append("Generations: " + maxGenerations + System.lineSeparator());
-        sb.append("Selection type: " + selection + System.lineSeparator());
+        sb.append("Problem type: ").append(problemType.name().toLowerCase()).append("\r\n");
+        sb.append("NN inputs units: ").append(nnInputs).append("\r\n");
+        sb.append("NN hidden units: ").append(nnHidden).append("\r\n");
+        sb.append("NN output units: ").append(nnOutputs).append("\r\n");
+        sb.append("NN activation function(s): ").append(nnActivation).append("\r\n");
+        sb.append("Population size: ").append(populationSize).append("\r\n");
+        sb.append("Generations: ").append(maxGenerations).append("\r\n");
+        sb.append("Selection method: ").append(selection).append("\r\n");
 
         if (selection instanceof Tournament)
-            sb.append("Selection size: " + tournamentSize + System.lineSeparator());
+            sb.append("Selection size: ").append(tournamentSize).append("\r\n");
 
-        sb.append("Recombination type: " + recombination + System.lineSeparator());
-        sb.append("Recombination prob.: " + recombinationProbability + System.lineSeparator());
-        sb.append("Mutation type: " + mutation + System.lineSeparator());
-        sb.append("Mutation prob.: " + mutationProbability);
+        sb.append("Recombination type: ").append(recombination).append("\r\n");
+        sb.append("Recombination prob.: ").append(recombinationProbability).append("\r\n");
+        sb.append("Mutation type: ").append(mutation).append("\r\n");
+        sb.append("Mutation prob.: ").append(mutationProbability);
 
         return sb.toString();
     }

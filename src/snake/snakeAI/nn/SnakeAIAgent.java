@@ -2,16 +2,14 @@ package snake.snakeAI.nn;
 
 import snake.*;
 import snake.snakeAI.nn.utils.ActivationFunction;
-import sun.rmi.server.Activation;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class SnakeAIAgent extends SnakeAgent {
     final protected int inputLayerSize;
     final protected int hiddenLayerSize;
     final protected int outputLayerSize;
+    final protected ActivationFunction activationFunction;
 
     /**
      * Network inputs array.
@@ -34,11 +32,13 @@ public abstract class SnakeAIAgent extends SnakeAgent {
      */
     final protected double[] output;
 
-    public SnakeAIAgent(Cell cell, int inputLayerSize, int hiddenLayerSize, int outputLayerSize, Color color) {
+    public SnakeAIAgent(Cell cell, int inputLayerSize, int hiddenLayerSize, int outputLayerSize,
+                        ActivationFunction activationFunction, Color color) {
         super(cell, color.darker(), color);
         this.inputLayerSize = inputLayerSize;
         this.hiddenLayerSize = hiddenLayerSize;
         this.outputLayerSize = outputLayerSize;
+        this.activationFunction = activationFunction;
         inputs = new int[inputLayerSize];
         inputs[inputs.length - 1] = -1; //bias entry
         w1 = new double[inputLayerSize][hiddenLayerSize]; // the bias entry for the hidden layer neurons is already counted in inputLayerSize variable
@@ -89,14 +89,14 @@ public abstract class SnakeAIAgent extends SnakeAgent {
         for (int i = 0; i < hiddenLayerSize; i++, sum = 0) {
             for (int j = 0; j < inputLayerSize; j++)
                 sum += inputs [j] * w1[j][i];
-            hiddenLayerOutput[i] = ActivationFunction.tahn(sum);
+            hiddenLayerOutput[i] = activationFunction.compute(sum);
         }
 
         // computing the activation values of the output layer neurons
         for (int i = 0; i < outputLayerSize; i++, sum = 0) {
             for (int j = 0; j < hiddenLayerSize + 1; j++)
                 sum += hiddenLayerOutput[j] * w2[j][i];
-            output[i] = ActivationFunction.tahn(sum);
+            output[i] = activationFunction.compute(sum);
         }
     }
 

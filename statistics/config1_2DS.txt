@@ -1,0 +1,32 @@
+Runs: 10
+Population size: 100
+Max generations: 1000
+
+//--------------------------------
+
+Problem type: two_different_ai
+
+//--------------------------------
+
+Selection: tournament, roullette
+Tournament size: 10
+
+//--------------------------------
+
+Recombination: one_cut, uniform
+Recombination probability: 0.7
+
+//--------------------------------
+
+Mutation: gaussian
+Mutation probability: 0.015, 0.2, 0.9
+Delta: 0.3
+
+//--------------------------------
+
+Problem file: datasets/dataset1_2DS.txt
+
+//--------------------------------
+
+Statistic: BestIndividual
+Statistic: BestAverage

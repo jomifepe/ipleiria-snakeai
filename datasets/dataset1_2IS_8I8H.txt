@@ -4,3 +4,4 @@ Number of environment simulations: 10
 Number of NN inputs: 8
 Number of NN hidden units: 8
 Number of NN outputs: 4
+Activation function: sigmoid
