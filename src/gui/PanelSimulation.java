@@ -51,7 +51,7 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
 
         Font labelFont = simulationInfoLabel.getFont();
         Font boldLabelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize());
-        panelSimulationInfo.setLayout(new GridLayout(5, 2));
+        panelSimulationInfo.setLayout(new GridLayout(6, 2));
         simulationInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
         simulationInfoCount.setHorizontalAlignment(SwingConstants.RIGHT);
         simulationInfoSnake1FoodLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -117,9 +117,9 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         if (!flag || PanelParameters.getProblemType().ordinal() > ProblemType.ONE_AI.ordinal()) {
             simulationInfoSnake2FoodLabel.setVisible(flag);
             simulationInfoSnake2FoodCount.setVisible(flag);
-            simulationInfoTotalFoodsLabel.setVisible(flag);
-            simulationInfoTotalFoodsCount.setVisible(flag);
         }
+        simulationInfoTotalFoodsLabel.setVisible(flag);
+        simulationInfoTotalFoodsCount.setVisible(flag);
         simulationInfoSnakesTotalMovementsLabel.setVisible(flag);
         simulationInfoSnakesTotalMovementsCount.setVisible(flag);
     }

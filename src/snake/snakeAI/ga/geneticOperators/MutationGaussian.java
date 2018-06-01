@@ -1,10 +1,12 @@
 package snake.snakeAI.ga.geneticOperators;
 
 import snake.Environment;
+import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.RealVectorIndividual;
 
 public class MutationGaussian<I extends RealVectorIndividual> extends Mutation<I> {
 
+    /* TODO: dúvida: delta */
     private double delta;
 
     public MutationGaussian(double probability) {
@@ -20,9 +22,10 @@ public class MutationGaussian<I extends RealVectorIndividual> extends Mutation<I
     @Override
     public void run(I ind) {
         for (int i = 0; i < ind.getNumGenes(); i++) {
-            if (Environment.random.nextDouble() < probability) {
+            if (GeneticAlgorithm.random.nextDouble() < probability) {
                 double gene = ind.getGene(i);
-                ind.setGene(i, gene + Environment.random.nextGaussian() * delta);
+                /* TODO: dúvida: random seeds */
+                ind.setGene(i, gene + GeneticAlgorithm.random.nextGaussian() * delta);
             }
         }
     }

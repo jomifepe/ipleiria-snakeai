@@ -89,14 +89,14 @@ public abstract class SnakeAIAgent extends SnakeAgent {
         for (int i = 0; i < hiddenLayerSize; i++, sum = 0) {
             for (int j = 0; j < inputLayerSize; j++)
                 sum += inputs [j] * w1[j][i];
-            hiddenLayerOutput[i] = ActivationFunction.sigmoid(sum);
+            hiddenLayerOutput[i] = ActivationFunction.tahn(sum);
         }
 
         // computing the activation values of the output layer neurons
         for (int i = 0; i < outputLayerSize; i++, sum = 0) {
             for (int j = 0; j < hiddenLayerSize + 1; j++)
                 sum += hiddenLayerOutput[j] * w2[j][i];
-            output[i] = ActivationFunction.sigmoid(sum);
+            output[i] = ActivationFunction.tahn(sum);
         }
     }
 

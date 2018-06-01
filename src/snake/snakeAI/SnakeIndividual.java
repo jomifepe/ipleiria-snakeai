@@ -54,13 +54,14 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
         EnvironmentAI environment = (EnvironmentAI) this.problem.getEnvironment();
         numSimulations = problem.getNumEvironmentSimulations();
-        List<SnakeAgent> agents;
+        List<SnakeAgent> agents = new ArrayList<>();
         int stepsTakenSinceLastFood = 0;
 
         int penalty = 0; // used with two different snakes
         int[] totalIndividualSnakeFoods = {0, 0};
         int[] totalIndividualSnakeMovements = {0, 0};
 
+        bestFoods = 0;
         int movements = 0, food = 0;
         for (int i = 0; i < numSimulations; i++) {
             /* generating the SnakeAIAgent and the food */
@@ -72,7 +73,8 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
             /* testing the agent(s) performance with the new weights */
             environment.simulate();
 
-            int auxAgentsFoodSum = 0, auxAgentsMovementsSum = 0;
+            int auxAgentsFoodSum = 0;
+            int auxAgentsMovementsSum = 0;
             for (int j = 0; j < agents.size(); j++) {
                 SnakeAgent agent = agents.get(j);
                 int currentAgentFood = agent.getTailSize();
@@ -102,7 +104,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         avgFoods = (double) food / numSimulations;
         stepsTakenSinceLastFood = stepsTakenSinceLastFood / numSimulations;
 
-        boolean stalling = stepsTakenSinceLastFood > 100;
+        boolean stalling = stepsTakenSinceLastFood > (agents.size() * 100);
 
         /* penalty to prevent one of the two different snakes from slacking */
         if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
@@ -110,8 +112,8 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
                     (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << (stalling ? 2 : 5));
         }
 
-//        ConsoleUtils.println(stalling ? ConsoleColor.BRIGHT_RED : ConsoleColor.BRIGHT_GREEN, String.valueOf(stepsTakenSinceLastFood));
-        return fitness = (food << 11) - (movements >> (stalling ? 2 : 5)) - penalty;
+        boolean penalizeSlackingAgents = PanelParameters.isPenalizationCheckBoxChecked();
+        return fitness = (food << 11) - (movements >> (stalling ? 2 : 5)) - (penalizeSlackingAgents ? penalty : 0);
     }
 
     public double[] getGenome(){

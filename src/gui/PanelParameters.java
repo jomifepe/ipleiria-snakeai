@@ -29,6 +29,9 @@ public class PanelParameters extends PanelAtributesValue {
     public static final String PROB_RECOMBINATION = "0.7";
     public static final String PROB_MUTATION = "0.2";
 
+    static JComboBox comboBoxSelectionProblemType = new JComboBox(ProblemType.values());
+    static JCheckBox checkBoxUsePenalty = new JCheckBox("Penalize slacking agents");
+
     static JTextField textFieldSeed = new JTextField(SEED, TEXT_FIELD_LENGHT);
     JTextField textFieldN = new JTextField(POPULATION_SIZE, TEXT_FIELD_LENGHT);
     JTextField textFieldGenerations = new JTextField(GENERATIONS, TEXT_FIELD_LENGHT);
@@ -47,8 +50,6 @@ public class PanelParameters extends PanelAtributesValue {
     JComboBox comboBoxMutationMethods = new JComboBox(mutationMethods);
     JTextField textFieldProbMutation = new JTextField(PROB_MUTATION, TEXT_FIELD_LENGHT);
 
-    static JComboBox comboBoxSelectionProblemType = new JComboBox(ProblemType.values());
-
     private final ArrayList<CBSnakeTypeListener> cbSnakeTypeListeners = new ArrayList<>();
 
     public PanelParameters() {
@@ -57,6 +58,10 @@ public class PanelParameters extends PanelAtributesValue {
         labels.add(new JLabel("Problem type: "));
         valueComponents.add(comboBoxSelectionProblemType);
         comboBoxSelectionProblemType.addActionListener(new JComboBoxSelectionSnakeType_ActionAdapter(this));
+
+        labels.add(new JLabel(""));
+        checkBoxUsePenalty.setSelected(true);
+        valueComponents.add(checkBoxUsePenalty);
 
         labels.add(new JLabel("Seed: "));
         buttonRandomizeSeed.setToolTipText("Randomize");
@@ -183,6 +188,8 @@ public class PanelParameters extends PanelAtributesValue {
     public static boolean isCustomSeedCheckBoxChecked() {
         return checkBoxUseSeed.isSelected();
     }
+
+    public static boolean isPenalizationCheckBoxChecked() { return checkBoxUsePenalty.isSelected(); }
 
     public static int getSeedValue() {
         String seed = textFieldSeed.getText().trim();

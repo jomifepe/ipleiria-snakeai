@@ -1,6 +1,7 @@
 package snake.snakeAI.ga.geneticOperators;
 
 import snake.Environment;
+import snake.snakeAI.ga.GeneticAlgorithm;
 import snake.snakeAI.ga.RealVectorIndividual;
 
 public class MutationAddOrSubtract<I extends RealVectorIndividual> extends Mutation<I> {
@@ -20,10 +21,10 @@ public class MutationAddOrSubtract<I extends RealVectorIndividual> extends Mutat
     @Override
     public void run(I ind) {
         for (int i = 0; i < ind.getNumGenes(); i++) {
-            if (Environment.random.nextDouble() < probability) {
+            if (GeneticAlgorithm.random.nextDouble() < probability) {
                 double gene = ind.getGene(i);
                 /* randomly chooses to sum or subtract */
-                double val = (Environment.random.nextBoolean() ? 1 : -1) * (delta * gene);
+                double val = (GeneticAlgorithm.random.nextBoolean() ? 1 : -1) * (delta * gene);
                 ind.setGene(i, gene + val);
             }
         }
