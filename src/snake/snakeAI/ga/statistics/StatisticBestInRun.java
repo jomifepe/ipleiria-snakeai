@@ -84,7 +84,7 @@ public class StatisticBestInRun<I extends Individual, P extends Problem<I>> impl
         String txtFullPath = filePath + fileName + ".txt";
 
         StringBuilder txtIndividual = new StringBuilder();
-        txtIndividual.append("Fitness: " + bestInExperiment.getFitness() + "\r\n");
+        txtIndividual.append("Fitness: " + String.format( "%.1f", bestInExperiment.getFitness()) + "\r\n");
         txtIndividual.append("Average Foods: " + ((SnakeIndividual) bestInExperiment).getAvgFoods() + "\r\n");
         txtIndividual.append("Best Foods: " + ((SnakeIndividual) bestInExperiment).getBestFoods() + "\r\n");
         txtIndividual.append("Average Movements: " + ((SnakeIndividual) bestInExperiment).getAvgMovements() + "\r\n");

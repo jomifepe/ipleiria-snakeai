@@ -41,38 +41,37 @@ public class EnvironmentAI extends Environment {
 
         switch (PanelParameters.getProblemType()) {
             case ONE_AI:
-                SnakeAIAgent agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
-                        activationFunctions.get(0), Color.GREEN);
-                agents.add(agent);
+                agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN));
 
                 if (hasBestInRun()) {
                     setWeights(bestInRun.getGenome());
                 }
                 break;
             case TWO_IDENTICAL_AI:
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
-                        activationFunctions.get(0), Color.GREEN);
-                agents.add(agent);
+                agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN));
 
                 agentCell = getAgentFreeCell();
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
-                        activationFunctions.get(0), Color.ORANGE);
-                agents.add(agent);
+                agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.ORANGE));
 
                 if (hasBestInRun()) {
                     setWeights(bestInRun.getGenome());
                 }
                 break;
             case TWO_DIFFERENT_AI:
-                agent = new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
-                        activationFunctions.get(0), Color.GREEN);
-                agents.add(agent);
+                agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(0), numNNHidden.get(0), numNNOutputs.get(0),
+                        activationFunctions.get(0), Color.GREEN));
 
                 agentCell = getAgentFreeCell();
-                int index = numNNInputs.size() - 1;
-                SnakeAIAgentV2 agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(index), numNNHidden.get(index), numNNOutputs.get(index),
-                        activationFunctions.get(index), Color.ORANGE);
-                agents.add(agentV2);
+
+//                SnakeAIAgentV2 agentV2 = new SnakeAIAgentV2(agentCell, numNNInputs.get(index), numNNHidden.get(index), numNNOutputs.get(index),
+//                        activationFunctions.get(index), Color.ORANGE);
+//                agents.add(agentV2);
+
+                agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(1), numNNHidden.get(1), numNNOutputs.get(1),
+                        activationFunctions.get(1), Color.ORANGE));
 
                 if (hasBestInRun()) {
                     setWeights(bestInRun.getGenome());

@@ -35,10 +35,6 @@ public class Tournament <I extends Individual, P extends Problem<I>> extends Sel
             I aux = population.getIndividual(GeneticAlgorithm.random.nextInt(popSize));
             if (aux.getFitness() > best.getFitness())
                 best = aux;
-
-//            if (aux.compareTo(best) < 0) { //if aux is BETTER than best
-//                best = aux;
-//            }
         }
         return (I) best.clone();
     }

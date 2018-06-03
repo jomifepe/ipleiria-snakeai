@@ -298,8 +298,6 @@ public class MainFrame extends JFrame implements GAListener {
         try {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 experimentsFactory = new SnakeExperimentsFactory(fc.getSelectedFile());
-//                problemPanel.textArea.setText(experiment.prettyPrint());
-//                problemPanel.textArea.setCaretPosition(0);
 
                 manageButtons(true, problem != null, false, true, true, false);
             }
@@ -316,7 +314,7 @@ public class MainFrame extends JFrame implements GAListener {
 
     public void buttonRunExperiments_actionPerformed(ActionEvent e) {
         manageButtons(false, false, false, false, false, false);
-        textFieldExperimentsStatus.setText("Running");
+        textFieldExperimentsStatus.setText("Running (0 done)");
 
         worker = new SwingWorker<Void, Void>() {
             boolean error = false;
@@ -325,6 +323,7 @@ public class MainFrame extends JFrame implements GAListener {
             public Void doInBackground() {
 
                 try {
+                    int experimentCounter = 0;
                     while (experimentsFactory.hasMoreExperiments()) {
                         try {
                             Experiment experiment = experimentsFactory.nextExperiment();
@@ -341,6 +340,8 @@ public class MainFrame extends JFrame implements GAListener {
                         } catch (IOException e1) {
                             e1.printStackTrace(System.err);
                         }
+                        experimentCounter++;
+                        textFieldExperimentsStatus.setText("Running (" + experimentCounter + " done)");
                     }
                 } catch (Exception e) {
                     e.printStackTrace(System.err);

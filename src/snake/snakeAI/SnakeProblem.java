@@ -21,7 +21,7 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
     private List<Integer> numInputs = null;
     private List<Integer> numHiddenUnits = null;
     private List<Integer> numOutputs = null;
-    private List<ActivationFunction> activationFunction = null;
+    private List<ActivationFunction> activationFunctions = null;
 
     public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns) {
         this.environmentSize = environmentSize;
@@ -33,7 +33,7 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
     public SnakeProblem(int environmentSize, int maxIterations, int numEnvironmentRuns,
                         List<Integer> numInputs, List<Integer> numHiddenUnits, List<Integer> numOutputs,
-                        List<ActivationFunction> activationFunction) {
+                        List<ActivationFunction> activationFunctions) {
 
         this.environmentSize = environmentSize;
         this.maxIterations = maxIterations;
@@ -41,10 +41,10 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
         this.numInputs = numInputs;
         this.numHiddenUnits = numHiddenUnits;
         this.numOutputs = numOutputs;
-        this.activationFunction = activationFunction;
+        this.activationFunctions = activationFunctions;
 
         environment = new EnvironmentAI(environmentSize, maxIterations);
-        ((EnvironmentAI) environment).setNNParameters(numInputs, numHiddenUnits, numOutputs, activationFunction);
+        ((EnvironmentAI) environment).setNNParameters(numInputs, numHiddenUnits, numOutputs, activationFunctions);
     }
 
     @Override
@@ -160,14 +160,13 @@ public class SnakeProblem implements Problem<SnakeIndividual> {
 
         if (environment instanceof EnvironmentAI) {
             sb.append("\n");
-            sb.append("Number of inputs: ");
-            sb.append(numInputs);
+            sb.append("Number of inputs: ").append(numInputs);
             sb.append("\n");
-            sb.append("Number of hidden units: ");
-            sb.append(numHiddenUnits);
+            sb.append("Number of hidden units: ").append(numHiddenUnits);
             sb.append("\n");
-            sb.append("Number of outputs: ");
-            sb.append(numOutputs);
+            sb.append("Number of outputs: ").append(numOutputs);
+            sb.append("\n");
+            sb.append("Activation function(s): ").append(activationFunctions);
         }
 
         return sb.toString();

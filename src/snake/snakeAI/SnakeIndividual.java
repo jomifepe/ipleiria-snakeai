@@ -32,20 +32,6 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         this.numSimulations = original.numSimulations;
     }
 
-    /*
-    para cada simulação (utilizar var de iteração como seed do random)
-        ir ao genoma buscar os pesos das sinapses e colocá-los na RN (setWeights)
-        mandar a snakeAI decidir
-            colocar os inputs com os valores percecionados
-            mandar executar o forwardpropagation
-            observar os valores dos outputs
-            decidir ação
-        manda a cobra iterar o máximo de x vezes
-        recolhe métricas (e.g, comidas, iterações, ...)
-
-    atribuir e devolver a fitness (valorizar mais as comidas que as iterações)
-    */
-
     @Override
     public double computeFitness() {
         if (!(this.problem.getEnvironment() instanceof EnvironmentAI)) {
@@ -109,11 +95,11 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         /* penalty to prevent one of the two different snakes from slacking */
         if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
             penalty = (Math.abs(totalIndividualSnakeFoods[0] - totalIndividualSnakeFoods[1]) << 11) +
-                    (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << (stalling ? 2 : 5));
+                    (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << (stalling ? 4 : 5));
         }
 
         boolean penalizeSlackingAgents = PanelParameters.isPenalizationCheckBoxChecked();
-        return fitness = (food << 11) - (movements >> (stalling ? 2 : 5)) - (penalizeSlackingAgents ? penalty : 0);
+        return fitness = (food << 11) - (((double) movements) / (stalling ? 16.0 : 32.0)) - (penalizeSlackingAgents ? penalty : 0);
     }
 
     public double[] getGenome(){
@@ -138,7 +124,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         sb.append(System.lineSeparator());
         sb.append(System.lineSeparator());
 
-        sb.append("▪  Fitness: ").append(fitness);
+        sb.append("▪  Fitness: ").append(String.format( "%.1f", fitness));
         sb.append(System.lineSeparator());
         sb.append(System.lineSeparator());
 

@@ -10,7 +10,7 @@ public abstract class RealVectorIndividual <P extends Problem, I extends RealVec
         super(problem);
         genome = new double[size];
         for (int g = 0; g < genome.length; g++) {
-            genome[g] = (Environment.random.nextDouble() * 2 - 1);
+            genome[g] = (GeneticAlgorithm.random.nextDouble() * 2 - 1);
         }
     }
 

@@ -26,6 +26,6 @@ public class MutationRandomGeneSwap<I extends RealVectorIndividual> extends Muta
     
     @Override
     public String toString(){
-        return "AddOrSubtract";
+        return "RandomGeneSwap";
     }
 }

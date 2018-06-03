@@ -64,6 +64,7 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
                 break;
             case "roullette":
                 selection = new RouletteWheel<>(populationSize);
+                break;
         }
 
         //RECOMBINATION
@@ -89,6 +90,9 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
                 break;
             case "add_or_subtract":
                 mutation = new MutationAddOrSubtract<>(mutationProbability, delta);
+                break;
+            case "random_gene_swap":
+                mutation = new MutationRandomGeneSwap<>(mutationProbability);
                 break;
         }
 
@@ -151,12 +155,13 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
 
     private String getExperimentValuesString() {
         EnvironmentAI environment = (EnvironmentAI) problem.getEnvironment();
-        String nnInputs = environment.getNumNNInputs().stream()
-                .map(Object::toString).collect(Collectors.joining(", "));
-        String nnHidden = environment.getNumNNHidden().stream()
-                .map(Object::toString).collect(Collectors.joining(", "));
-        String nnOutputs = environment.getNumNNOutputs().stream()
-                .map(Object::toString).collect(Collectors.joining(", "));
+        /* separate the values with commas */
+        String nnInputs = environment.getNumNNInputs()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+        String nnHidden = environment.getNumNNHidden()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+        String nnOutputs = environment.getNumNNOutputs()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
         String nnActivation = environment.getActivationFunctions()
                 .stream().map(Object::toString).collect(Collectors.joining(", "));
 
@@ -187,12 +192,13 @@ public class SnakeExperimentsFactory extends ExperimentsFactory {
     @Override
     public String prettyPrint() {
         EnvironmentAI environment = (EnvironmentAI) problem.getEnvironment();
-        String nnInputs = environment.getNumNNInputs().stream().
-                map(Object::toString).collect(Collectors.joining(", "));
-        String nnHidden = environment.getNumNNHidden().stream()
-                .map(Object::toString).collect(Collectors.joining(", "));
-        String nnOutputs = environment.getNumNNOutputs().stream()
-                .map(Object::toString).collect(Collectors.joining(", "));
+        /* separate the values with commas */
+        String nnInputs = environment.getNumNNInputs()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+        String nnHidden = environment.getNumNNHidden()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
+        String nnOutputs = environment.getNumNNOutputs()
+                .stream().map(Object::toString).collect(Collectors.joining(", "));
         String nnActivation = environment.getActivationFunctions()
                 .stream().map(Object::toString).collect(Collectors.joining(", "));
 
