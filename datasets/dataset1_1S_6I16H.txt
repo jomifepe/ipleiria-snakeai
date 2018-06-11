@@ -1,7 +1,7 @@
 Environment size: 10
 Maximum number of iterations: 500
 Number of environment simulations: 10
-Number of NN inputs: 8
-Number of NN hidden units: 6
+Number of NN inputs: 6
+Number of NN hidden units: 16
 Number of NN outputs: 4
 Activation function: sigmoid

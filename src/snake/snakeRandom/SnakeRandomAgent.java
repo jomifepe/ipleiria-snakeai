@@ -14,30 +14,30 @@ public class SnakeRandomAgent extends SnakeAgent {
 
     @Override
     protected Action decide(Perception perception) {
-        ArrayList<Action> directions = new ArrayList<>();
-
-        Cell w = perception.getW();
         Cell n = perception.getN();
-        Cell e = perception.getE();
         Cell s = perception.getS();
+        Cell e = perception.getE();
+        Cell w = perception.getW();
 
-        if (w != null && w.hasFood())
-            return Action.WEST;
         if (n != null && n.hasFood())
             return Action.NORTH;
-        if (e != null && e.hasFood())
-            return Action.EAST;
         if (s != null && s.hasFood())
             return Action.SOUTH;
+        if (e != null && e.hasFood())
+            return Action.EAST;
+        if (w != null && w.hasFood())
+            return Action.WEST;
 
-        if (e != null && e.isFree())
-            directions.add(Action.EAST);
-        if (n != null && n.isFree())
-            directions.add(Action.NORTH);
-        if (s != null && s.isFree())
-            directions.add(Action.SOUTH);
-        if (w != null && w.isFree())
-            directions.add(Action.WEST);
+        ArrayList<Action> directions = new ArrayList<Action>() {{
+            if (n != null && n.isFree())
+                add(Action.NORTH);
+            if (s != null && s.isFree())
+                add(Action.SOUTH);
+            if (e != null && e.isFree())
+                add(Action.EAST);
+            if (w != null && w.isFree())
+                add(Action.WEST);
+        }};
 
         return directions.size() > 0 ? directions.get(Environment.random.nextInt(directions.size())) : null;
     }

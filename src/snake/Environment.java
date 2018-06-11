@@ -179,4 +179,13 @@ public abstract class Environment {
             listener.environmentUpdated();
         }
     }
+
+    public SnakeAgent getBestAgent() {
+        SnakeAgent best = agents.get(0);
+        for (SnakeAgent agent : agents) {
+            if (agent.getTailSize() > best.getTailSize())
+                best = agent;
+        }
+        return best;
+    }
 }

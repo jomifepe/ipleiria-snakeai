@@ -1,6 +1,6 @@
 Runs: 10
 Population size: 100
-Max generations: 1000
+Max generations: 700
 
 //--------------------------------
 
@@ -8,12 +8,12 @@ Problem type: two_different_ai
 
 //--------------------------------
 
-Selection: tournament, roullette
+Selection: tournament
 Tournament size: 10
 
 //--------------------------------
 
-Recombination: one_cut, uniform
+Recombination: one_cut
 Recombination probability: 0.7
 
 //--------------------------------

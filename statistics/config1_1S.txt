@@ -1,6 +1,6 @@
 Runs: 10
 Population size: 100
-Max generations: 1000
+Max generations: 700
 
 //--------------------------------
 
@@ -8,7 +8,7 @@ Problem type: one_ai
 
 //--------------------------------
 
-Selection: tournament, roullette
+Selection: tournament
 Tournament size: 10
 
 //--------------------------------
@@ -18,7 +18,7 @@ Recombination probability: 0.7
 
 //--------------------------------
 
-Mutation: gaussian, add_or_subtract
+Mutation: gaussian
 Mutation probability: 0.015, 0.2, 0.9
 Delta: 0.3
 

@@ -45,7 +45,7 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
 
         int penalty = 0; // used with two different snakes
         int[] totalIndividualSnakeFoods = {0, 0};
-        int[] totalIndividualSnakeMovements = {0, 0};
+        int[] totalIndividualSnakeStepsSinceLastFood = {0, 0};
 
         bestFoods = 0;
         int movements = 0, food = 0;
@@ -65,15 +65,16 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
                 SnakeAgent agent = agents.get(j);
                 int currentAgentFood = agent.getTailSize();
                 int currentAgentMovements = agent.getMovements();
+                int currentAgentStepsTakenSinceLastFood = agent.getStepsTakenSinceLastFood();
 
                 /* only used for penalty --------------------------------------- */
                     totalIndividualSnakeFoods[j] += currentAgentFood;
-                    totalIndividualSnakeMovements[j] += currentAgentMovements;
+                    totalIndividualSnakeStepsSinceLastFood[j] += currentAgentStepsTakenSinceLastFood;
                 /* ------------------------------------------------------------- */
 
                 food += currentAgentFood;
                 movements += currentAgentMovements;
-                stepsTakenSinceLastFood += agent.getStepsTakenSinceLastFood();
+                stepsTakenSinceLastFood += currentAgentStepsTakenSinceLastFood;
 
                 auxAgentsFoodSum += currentAgentFood;
                 auxAgentsMovementsSum += currentAgentMovements;
@@ -95,10 +96,12 @@ public class SnakeIndividual extends RealVectorIndividual<SnakeProblem, SnakeInd
         /* penalty to prevent one of the two different snakes from slacking */
         if (PanelParameters.getProblemType() == ProblemType.TWO_DIFFERENT_AI) {
             penalty = (Math.abs(totalIndividualSnakeFoods[0] - totalIndividualSnakeFoods[1]) << 11) +
-                    (Math.abs(totalIndividualSnakeMovements[0] - totalIndividualSnakeMovements[1]) << (stalling ? 4 : 5));
+                    (Math.abs(totalIndividualSnakeStepsSinceLastFood[0] - totalIndividualSnakeStepsSinceLastFood[1]) << (stalling ? 4 : 5));
         }
 
+        /* for testing purposes */
         boolean penalizeSlackingAgents = PanelParameters.isPenalizationCheckBoxChecked();
+
         return fitness = (food << 11) - (((double) movements) / (stalling ? 16.0 : 32.0)) - (penalizeSlackingAgents ? penalty : 0);
     }
 

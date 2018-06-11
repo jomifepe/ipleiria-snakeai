@@ -1,6 +1,7 @@
 package gui;
 
 import snake.*;
+import snake.snakeAI.ga.utils.FileOperations;
 import util.ConsoleColor;
 import util.ConsoleUtils;
 
@@ -139,7 +140,6 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
         this.simulationInfoSnake2FoodCount.setText(String.valueOf(snake2Foods = value));
         updateSimulationInfoTotalFoodsCount();
     }
-
     public void updateSimulationInfoTotalFoodsCount() {
         this.simulationInfoTotalFoodsCount.setText(String.valueOf(snake1Foods + snake2Foods));
     }
@@ -177,12 +177,40 @@ public class PanelSimulation extends JPanel implements EnvironmentListener, CBSn
                         Environment.random.setSeed(PanelParameters.getSeedValue());
                     }
 
-                    for (int i = 0; i < environmentSimulations; i++) {
-                        setSimulationInfoCount(i + 1);
-                        environment.initialize(usingCustomSeed && environment instanceof EnvironmentNonAI ? null : i);
-                        environmentUpdated();
-                        environment.simulate();
-                    }
+//                    /* ---- BEGIN TESTING CODE ----  */
+//                    int currentBestFoods = 0;
+//                    int currentBestMovements = 0;
+//                    String ptype = PanelParameters.getProblemType().name();
+//                    String nonAIExperimentsFileName = "statistics/" + ptype + "_Experiments.xls";
+//                    usingCustomSeed = true;
+//                    if (!FileOperations.fileExists(nonAIExperimentsFileName))
+//                        FileOperations.appendToTextFile(nonAIExperimentsFileName, "Seed\tFoods\tMovements\r\n");
+//                    for (int run = 0; run < 30; run++) {
+//                        Environment.random.setSeed(run);
+//                        currentBestFoods = 0;
+//                        SnakeAgent bestAgent = null;
+//                        /* ---- END TESTING CODE ---- */
+
+                        for (int i = 0; i < environmentSimulations; i++) {
+                            setSimulationInfoCount(i + 1);
+                            environment.initialize(usingCustomSeed && environment instanceof EnvironmentNonAI ? null : i);
+                            environmentUpdated();
+                            environment.simulate();
+
+//                            /* ---- BEGIN TESTING CODE ----  */
+//                            bestAgent = environment.getBestAgent();
+//                            if (bestAgent.getTailSize() > currentBestFoods) {
+//                                currentBestFoods = bestAgent.getTailSize();
+//                                currentBestMovements = bestAgent.getMovements();
+//                            }
+//                            /* ---- END TESTING CODE ---- */
+                        }
+
+//                        /* ---- BEGIN TESTING CODE ----  */
+//                        FileOperations.appendToTextFile(nonAIExperimentsFileName, String.valueOf(run) + "\t" +
+//                                String.valueOf(currentBestFoods) + "\t" + String.valueOf(currentBestMovements) + "\r\n");
+//                        /* ---- END TESTING CODE ---- */
+//                    }
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

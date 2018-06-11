@@ -22,6 +22,17 @@ public enum ActivationFunction {
         public double compute(double weightedSum) {
             return Math.tanh(weightedSum);
         }
+    },
+    RELU {
+        /**
+         * Rectified linear unit function
+         * @param weightedSum
+         * @return computed value
+         */
+        @Override
+        public double compute(double weightedSum) {
+            return Math.max(0, weightedSum);
+        }
     };
 
     public abstract double compute(double weightedSum);

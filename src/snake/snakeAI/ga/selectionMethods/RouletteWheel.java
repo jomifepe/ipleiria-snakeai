@@ -49,6 +49,6 @@ public class RouletteWheel<I extends Individual, P extends Problem<I>> extends S
     
     @Override
     public String toString(){
-        return "Roulette wheel";
+        return "Roullette Wheel";
     }    
 }

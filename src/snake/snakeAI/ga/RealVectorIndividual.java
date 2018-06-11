@@ -1,7 +1,5 @@
 package snake.snakeAI.ga;
 
-import snake.Environment;
-
 public abstract class RealVectorIndividual <P extends Problem, I extends RealVectorIndividual> extends Individual<P, I>{
 
     protected double[] genome;

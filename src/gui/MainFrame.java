@@ -1,8 +1,6 @@
 package gui;
 
-import snake.EnvironmentAI;
-import snake.EnvironmentNonAI;
-import snake.ProblemType;
+import snake.*;
 import snake.snakeAI.SnakeIndividual;
 import snake.snakeAI.SnakeProblem;
 import snake.snakeAI.SnakeExperimentsFactory;

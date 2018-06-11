@@ -1,6 +1,6 @@
 Runs: 10
 Population size: 100
-Max generations: 1000
+Max generations: 700
 
 //--------------------------------
 
