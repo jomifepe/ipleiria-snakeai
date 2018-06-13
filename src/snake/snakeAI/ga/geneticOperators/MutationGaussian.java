@@ -6,7 +6,6 @@ import snake.snakeAI.ga.RealVectorIndividual;
 
 public class MutationGaussian<I extends RealVectorIndividual> extends Mutation<I> {
 
-    /* TODO: dúvida: delta */
     private double delta;
 
     public MutationGaussian(double probability) {
@@ -24,7 +23,6 @@ public class MutationGaussian<I extends RealVectorIndividual> extends Mutation<I
         for (int i = 0; i < ind.getNumGenes(); i++) {
             if (GeneticAlgorithm.random.nextDouble() < probability) {
                 double gene = ind.getGene(i);
-                /* TODO: dúvida: random seeds */
                 ind.setGene(i, gene + GeneticAlgorithm.random.nextGaussian() * delta);
             }
         }
