@@ -73,6 +73,8 @@ public class EnvironmentAI extends Environment {
                 agents.add(new SnakeAIAgentV1(agentCell, numNNInputs.get(1), numNNHidden.get(1), numNNOutputs.get(1),
                         activationFunctions.get(1), Color.ORANGE));
 
+                /**/
+
                 if (hasBestInRun()) {
                     setWeights(bestInRun.getGenome());
                 }
