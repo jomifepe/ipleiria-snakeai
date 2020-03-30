@@ -1,6 +1,5 @@
 # SnakeAI
-This is a school project which consists on creating the Snake Game using neural networks and genetic algorithms to make the snake play by itself.
-https://www.ipleiria.pt/estg/
+This was a school project which consisted on creating the Snake Game using neural networks and genetic algorithms to make the snake play by itself.
 
 ## Dataset parameters:
 1. **Environment size**: *«number»*
