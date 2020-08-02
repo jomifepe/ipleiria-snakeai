@@ -1,5 +1,5 @@
 # SnakeAI
-This was a school project which consisted on creating the Snake Game using neural networks and genetic algorithms to make the snake play by itself.
+University project - Snake game that uses neural networks and genetic algorithms to make the snake play by itself.
 
 ## Dataset parameters:
 1. **Environment size**: *«number»*
