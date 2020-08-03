@@ -26,3 +26,8 @@ University project - Snake game that uses neural networks and genetic algorithms
 * **Problem file**: *«dataset_path»*
 * **Statistic**: BestIndividual
 * **Statistic**: BestAverage
+
+## Authors
+[Jonathan Serrario](https://github.com/J0N4S13) & [José Pereira](https://github.com/jomifepe)
+
+@2018
